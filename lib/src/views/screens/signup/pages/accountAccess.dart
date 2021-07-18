@@ -31,7 +31,7 @@ class AccountAccess extends StatefulWidget {
 class _AccountAccessState extends State<AccountAccess> {
   AuthService _auth = new AuthService();
 
-  String accountType;
+  String accountType = "Client";
   TextEditingController email = new TextEditingController();
   TextEditingController password = new TextEditingController();
   TextEditingController confirmpassword = new TextEditingController();
@@ -82,8 +82,7 @@ class _AccountAccessState extends State<AccountAccess> {
 
       super.initState();
     }
-
-    _passNextPage() async {
+_passNextPage() async {
       // ignore: unrelated_type_equality_checks
       if (password.text.isNotEmpty &&
           password.text == confirmpassword.text &&
@@ -151,10 +150,11 @@ class _AccountAccessState extends State<AccountAccess> {
                   .type[Provider.of<VoiceData>(context, listen: false).langue],
               value: accountType,
               onChanged: (value) {
+                print(value);
                 setState(() {
-                  if (value == "Coursier" || value == "Deliverer")
-                    accountType = "coursier";
-                  if (value == "Client") accountType = "client";
+                  if (value == "Coursier" || value == "Coursier")
+                    accountType = "Coursier";
+                  if (value == "Client") accountType = "Client";
                 });
               },
             ),

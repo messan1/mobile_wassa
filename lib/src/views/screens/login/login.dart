@@ -8,12 +8,14 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:logger/logger.dart';
 import 'package:progress_state_button/progress_button.dart';
 import 'package:provider/provider.dart';
+import 'package:ucolis/src/DataHandler/loadingData.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
 
 import 'package:ucolis/src/Model/AuthState.dart';
 import 'package:ucolis/src/app/scaffoldPlatform.dart';
 import 'package:ucolis/src/constants/constAudio.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
+import 'package:ucolis/src/services/auth.dart';
 import 'package:ucolis/src/utils/Assistance/AuthAssistanceMethods.dart';
 import 'package:ucolis/src/views/components/simpleButtonLoading.dart';
 import 'package:ucolis/src/views/components/voiceCommand.dart';
@@ -42,6 +44,8 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.idle);
     _getThingsOnStartup().then((value) {
       if (Provider.of<VoiceData>(context, listen: false).activercommandeVocal) {
         showDialog(
@@ -92,6 +96,7 @@ class _LoginState extends State<Login> {
       EasyLoading.dismiss();
     }
 
+    AuthService _auth = new AuthService();
     return ScaffoldPlatform(
         appBarTitle: Langue
             .appName[Provider.of<VoiceData>(context, listen: false).langue],
@@ -129,45 +134,20 @@ class _LoginState extends State<Login> {
                   )),
                 ),
                 VerticalSeparator(height: .065),
-                SimpleButton(
-                  title: Langue.con[
-                      Provider.of<VoiceData>(context, listen: false).langue],
-                  color: blueFont,
-                  onTap: () async {
-                    _showLoading();
+                SimpleButtonLoading(
+                    color: blueFont,
+                    title: Langue.con[
+                        Provider.of<VoiceData>(context, listen: false).langue],
+                    onTap: () => {
+                          //  _auth.phoneauth(context),
+                          //  Get.offAll(MapFromDeliver());
 
-                    Map data = {
-                      'username': email.text,
-                      'password': password.text
-                    };
-                    String body = json.encode(data);
-                    AuthState authState =
-                        await AuthAssistanceMethods.getAuthState(body, context);
-
-                    if (authState == null) {
-                      _disableLoading();
-                      _showError(Langue.con1[
-                          Provider.of<VoiceData>(context, listen: false)
-                              .langue]);
-                    } else {
-                      // Provider.of<AppData>(context, listen: false)
-                      //     .updateId(authState.id);
-                      if (authState.acsessToken.isNotEmpty &&
-                          authState.role == "ROLE_CLIENT") {
-                        _disableLoading();
-
-                        Get.offAll(Dashboard());
-                      } else if (authState.acsessToken.isNotEmpty &&
-                          authState.role == "ROLE_COURSIER") {
-                        _disableLoading();
-
-                        Get.offAll(MapFromDeliver());
-                      }
-                    }
-
-                    //Get.toNamed('/dashboard');
-                  },
-                ), //Connexion
+                          //Get.toNamed('/dashboard');
+                          _auth.emailAuthLogin(
+                              context, email.text, password.text)
+                        },
+                    state: null),
+                //Connexion
                 VerticalSeparator(height: .0175),
 
                 SimpleButton(

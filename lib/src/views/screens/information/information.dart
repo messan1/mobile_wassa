@@ -102,7 +102,6 @@ class _InformationState extends State<Information> {
     }
 
     _Save() async {
-      _showLoading();
       if (_firstnameController.text.isNotEmpty &&
           _lastnameController.text.isNotEmpty &&
           _dateController.text.isNotEmpty &&
@@ -111,12 +110,10 @@ class _InformationState extends State<Information> {
             _lastnameController.text,
             _firstnameController.text,
             _dateController.text);
-        var response = await AuthAssistanceMethods.signupUser(context);
-        if (response != null) {
-          _disableLoading();
-          _db.uploadFile(image);
-          // Get.toNamed("/adddocs");
-        }
+        _db.uploadFile(context,image);
+
+        //var response = await AuthAssistanceMethods.signupUser(context);
+
       } else {
         _disableLoading();
 
@@ -158,21 +155,11 @@ class _InformationState extends State<Information> {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(_size.height),
                           onTap: () async {
-                            
                             var imagepicker =
                                 await GlobalFunction.imageGetter(context);
                             setState(() {
                               image = imagepicker;
                             });
-                            _showLoading();
-                            var res = await AuthAssistanceMethods.uploadImage(
-                                image.path,
-                                Provider.of<UserAuth>(context, listen: false)
-                                    .email
-                                    .toString());
-                            if (res == null) {
-                              _disableLoading();
-                            }
                           },
                           child: Icon(
                             Icons.add_a_photo_outlined,

@@ -62,12 +62,12 @@ class SimpleButtonLoading extends StatelessWidget {
             ),
           },
           stateColors: {
-            ButtonState.idle: blackFont,
-            ButtonState.loading: blackFont,
+            ButtonState.idle: color == null ? blackFont : color,
+            ButtonState.loading: color == null ? blackFont : color,
             ButtonState.fail: redFont,
             ButtonState.success: greenFont,
           },
-          state:   Provider.of<LoadingData>(context, listen: true).stateOnlyText,
+          state: Provider.of<LoadingData>(context, listen: true).stateOnlyText,
           onPressed: onTap,
           padding: EdgeInsets.all(8.0),
         ));

@@ -9,18 +9,47 @@ import 'package:provider/provider.dart';
 import 'package:ucolis/src/DataHandler/loadingData.dart';
 import 'dart:async';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
+import 'package:ucolis/src/views/screens/dashboard/dashboard.dart';
 
+import 'db.dart';
 
 class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final DbService _internaldb = new DbService();
 
   // Firebase user one-time fetch
   User get getUser => _auth.currentUser;
 
   // Firebase user a realtime stream
   Stream<User> get user => _auth.authStateChanges();
+
+//Email auth lOGIN
+  Future<User> emailAuthLogin(context, String email, password) async {
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.loading);
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
+      Provider.of<LoadingData>(context, listen: false)
+          .updateloadingState(ButtonState.success);
+
+          Get.offAll(Dashboard());
+    } on FirebaseAuthException catch (e) {
+      Provider.of<LoadingData>(context, listen: false)
+          .updateloadingState(ButtonState.fail);
+      if (e.code == 'user-not-found') {
+        final snackBar =
+            SnackBar(content: Text("Aucun utilisateur n'existe avec ce mail"));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else if (e.code == 'wrong-password') {
+        final snackBar = SnackBar(content: Text("Mot de passe Incorrect"));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }
+  }
 
   //Email auth
   Future<User> emailAuth(context) async {
@@ -37,6 +66,9 @@ class AuthService {
       // Update user data
       Provider.of<LoadingData>(context, listen: false)
           .updateloadingState(ButtonState.idle);
+      Provider.of<UserAuth>(context, listen: false).updateUserUudi(user.uid);
+      _internaldb.updateUserEmailData(context);
+
       updateUserData(user);
       Get.toNamed('/Information');
 
@@ -70,6 +102,7 @@ class AuthService {
       phoneNumber: Provider.of<UserAuth>(context, listen: false).phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {},
       verificationFailed: (FirebaseAuthException e) async {
+        print(e);
         Provider.of<LoadingData>(context, listen: false)
             .updateloadingState(ButtonState.fail);
         final snackBar =
@@ -182,7 +215,5 @@ class AuthService {
     return _auth.signOut();
   }
 
-  Future<void> uploadProfile() async {
-
-  }
+  Future<void> uploadProfile() async {}
 }

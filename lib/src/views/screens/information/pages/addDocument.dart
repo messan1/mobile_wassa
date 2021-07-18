@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:get/route_manager.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +10,8 @@ import 'package:ucolis/src/app/scaffoldPlatform.dart';
 import 'package:ucolis/src/blocs/userBloc.dart';
 import 'package:ucolis/src/constants/constAudio.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
+import 'package:ucolis/src/services/db.dart';
+import 'package:ucolis/src/views/components/simpleButtonLoading.dart';
 import 'package:ucolis/src/views/components/voiceCommand.dart';
 import 'package:ucolis/src/views/screens/Auth/components/simpleButton.dart';
 import 'package:ucolis/src/views/screens/Auth/components/verticalSeparator.dart';
@@ -24,6 +28,7 @@ class AddDocument extends StatefulWidget {
 }
 
 class _AddDocumentState extends State<AddDocument> {
+  DbService _internaldb = new DbService();
   Future _getThingsOnStartup() async {
     await Future.delayed(Duration(seconds: 1));
   }
@@ -128,30 +133,20 @@ class _AddDocumentState extends State<AddDocument> {
               ),
               Column(
                 children: [
-                  StreamBuilder<String>(
+                  StreamBuilder<List<File>>(
+                    stream: userBloc.documents,
+                    initialData: <File>[],
                     builder: (context, snapshot) {
-                      return SimpleButton(
-                          title: Langue.save[
-                              Provider.of<VoiceData>(context, listen: false)
-                                  .langue],
-                          onTap: () {
-                            if (Provider.of<VoiceData>(context, listen: false)
-                                .activercommandeVocal) {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return VoiceDialogBox(
-                                        audio: data[4][Provider.of<VoiceData>(
-                                                context,
-                                                listen: false)
-                                            .langue],
-                                        close: true);
-                                  }).then((value) {
-                                Get.offAll(Login());
-                              });
-                            } else
-                              Get.offAll(Login());
-                          });
+                      return SimpleButtonLoading(
+                        title: Langue.save[
+                            Provider.of<VoiceData>(context, listen: false)
+                                .langue],
+                        onTap: () {
+                          
+                          _internaldb.uploadFiles(snapshot.data, context);
+                        },
+                        state: null,
+                      );
                     },
                   ),
                   VerticalSeparator(height: .014),

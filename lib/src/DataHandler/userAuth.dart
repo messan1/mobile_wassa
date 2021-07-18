@@ -11,13 +11,19 @@ class UserAuth extends ChangeNotifier {
   String verificationcode;
   String verificationId;
   String bith;
+  String useruuid;
   String email;
   String password;
   String role;
   AuthState authState;
   File profilePicture;
 
-  void updateCodeVerification(String date) {
+  void updateUserUudi(String date) {
+    useruuid = date;
+    notifyListeners();
+  }
+
+    void updateCodeVerification(String date) {
     verificationcode = date;
     notifyListeners();
   }
