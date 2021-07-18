@@ -8,6 +8,7 @@ import 'package:ucolis/src/views/screens/dashboard/pages/ChooseType.dart';
 import 'package:ucolis/src/views/screens/historic/historic.dart';
 import 'package:ucolis/src/views/screens/historic/pages/courseDetail.dart';
 import 'package:ucolis/src/views/screens/historic/pages/deliverInfo.dart';
+import 'package:ucolis/src/views/screens/infoVehicule/infovehicule.dart';
 import 'package:ucolis/src/views/screens/information/information.dart';
 import 'package:ucolis/src/views/screens/information/pages/addDocument.dart';
 import 'package:ucolis/src/views/screens/language/language.dart';
@@ -76,9 +77,10 @@ abstract class AppRoutes {
         GetPage(name: '/SignUp', page: () => SignUp()),
         GetPage(name: '/VerificationCode', page: () => VerificationCode()),
         GetPage(name: '/ResetPassword', page: () => ResetPassword()),
-        GetPage(name: '/OnboardingScreen', page: () => OnboardingScreen()),
+        GetPage(name: '/', page: () => OnboardingScreen()),
         GetPage(name: '/Information', page: () => Information()),
-        GetPage(name: '/', page: () => AddDocument()),
+        GetPage(name: '/AddDocument', page: () => AddDocument()),
         GetPage(name: '/AccountAccess', page: () => AccountAccess()),
+        GetPage(name: '/InfoVehicule', page: () => InfoVehicule()),
       ];
 }

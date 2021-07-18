@@ -18,12 +18,21 @@ class UserAuth extends ChangeNotifier {
   AuthState authState;
   File profilePicture;
 
+  //info véhicule
+  String typeVehicule = "Berline";
+
+  void updateVehicule(String car) {
+    typeVehicule = car;
+    notifyListeners();
+
+  }
+
   void updateUserUudi(String date) {
     useruuid = date;
     notifyListeners();
   }
 
-    void updateCodeVerification(String date) {
+  void updateCodeVerification(String date) {
     verificationcode = date;
     notifyListeners();
   }

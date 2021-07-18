@@ -85,7 +85,15 @@ class DbService {
       'birthday': Provider.of<UserAuth>(context, listen: false).bith,
       'lastActivity': DateTime.now(),
     }, SetOptions(merge: true));
-    Get.toNamed('/AddDocument');
+    if (Provider.of<UserAuth>(context, listen: false).role == "Client") {
+      final snackBar = SnackBar(
+          content: Text(
+              'Félicitation pour votre inscription vous pouvez vous connecter'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Get.toNamed('/Login');
+    } else {
+      Get.toNamed('/AddDocument');
+    }
   }
 
   Future<void> updateUserDocuments(context, List<String> docs) {
@@ -99,24 +107,23 @@ class DbService {
   }
 
   Future<void> uploadFiles(List<File> _images, context) async {
-    if(_images.length==0){
-              final snackBar = SnackBar(content: Text('Chargez des documents'));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-    }else{
-    List<String> fileData = [];
+    if (_images.length == 0) {
+      final snackBar = SnackBar(content: Text('Chargez des documents'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      List<String> fileData = [];
 
-    await Future.wait(_images.map((_image) async {
-      fileData.add(basename(_image.path));
-      uploadDoc(_image, context);
-    }));
-    updateUserDocuments(context, fileData);
+      await Future.wait(_images.map((_image) async {
+        fileData.add(basename(_image.path));
+        uploadDoc(_image, context);
+      }));
+      updateUserDocuments(context, fileData);
 
-    Provider.of<LoadingData>(context, listen: false)
-        .updateloadingState(ButtonState.success);
+      Provider.of<LoadingData>(context, listen: false)
+          .updateloadingState(ButtonState.success);
 
-    buildShowDialog(context);
+      buildShowDialog(context);
     }
-
   }
 
   Future<void> uploadDoc(File imageFile, context) async {

@@ -734,6 +734,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "smart_select",
+      "rootUri": "file:///Users/messanchristian/development/flutter/.pub-cache/hosted/pub.dartlang.org/smart_select-4.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "2.1"
+    },
+    {
       "name": "socket_io_client",
       "rootUri": "file:///Users/messanchristian/development/flutter/.pub-cache/hosted/pub.dartlang.org/socket_io_client-1.0.1",
       "packageUri": "lib/",
@@ -878,7 +884,7 @@
       "languageVersion": "2.2"
     }
   ],
-  "generated": "2021-07-18T12:45:53.628241Z",
+  "generated": "2021-07-18T16:45:45.668952Z",
   "generator": "pub",
   "generatorVersion": "2.13.3"
 }
