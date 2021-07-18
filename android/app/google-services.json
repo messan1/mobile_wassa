@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "598550749304",
+    "firebase_url": "https://wassawassa-42ed6-default-rtdb.firebaseio.com",
+    "project_id": "wassawassa-42ed6",
+    "storage_bucket": "wassawassa-42ed6.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:598550749304:android:aca8610a6de68dec5f8d8d",
+        "android_client_info": {
+          "package_name": "com.wassawassa"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "598550749304-kevogb9vqk6meto1ji09n62qcq4amh8v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.wassawassa",
+            "certificate_hash": "e657086b83fdda81f52f7ed2bbc4cd942e08000d"
+          }
+        },
+        {
+          "client_id": "598550749304-v8jvi0kpbh01ruu4rvmorp1pdqlhhd71.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtFJ3OCxda-6hxKu_7Ufb75V0FPeqQMac"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "598550749304-v8jvi0kpbh01ruu4rvmorp1pdqlhhd71.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "598550749304-bl8kof0o1t7cj9tg27e30tdtkr27dulp.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "ios.wassawassa"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

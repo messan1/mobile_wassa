@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>598550749304-bl8kof0o1t7cj9tg27e30tdtkr27dulp.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.598550749304-bl8kof0o1t7cj9tg27e30tdtkr27dulp</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBdYD2OW1LKnTZwPMnnBQ843mIhihRY5bc</string>
+	<key>GCM_SENDER_ID</key>
+	<string>598550749304</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>ios.wassawassa</string>
+	<key>PROJECT_ID</key>
+	<string>wassawassa-42ed6</string>
+	<key>STORAGE_BUCKET</key>
+	<string>wassawassa-42ed6.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:598550749304:ios:2a52e63c83ea36065f8d8d</string>
+</dict>
+</plist>
