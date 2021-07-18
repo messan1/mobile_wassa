@@ -35,7 +35,8 @@ class Destination extends StatefulWidget {
 class _DestinationState extends State<Destination> {
   final AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
   Future _getThingsOnStartup() async {
-    playAudio();
+    if (Provider.of<VoiceData>(context, listen: false).activercommandeVocal)
+      playAudio();
     await Future.delayed(Duration(seconds: 30));
   }
 

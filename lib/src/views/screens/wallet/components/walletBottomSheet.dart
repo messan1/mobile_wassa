@@ -62,7 +62,8 @@ class _WalletBottomSheetState extends State<WalletBottomSheet> {
               break;
           }
           setupPlaylist();
-          playAudio();
+          if (Provider.of<VoiceData>(context, listen: false)
+              .activercommandeVocal) playAudio();
         });
       }
     });

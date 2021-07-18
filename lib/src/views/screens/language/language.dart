@@ -33,27 +33,22 @@ class _LanguageState extends State<Language> {
                       [Provider.of<VoiceData>(context, listen: false).langue],
                   close: false);
             }).then((value) {
-          switch (Provider.of<VoiceData>(context, listen: false).reponse) {
-            case 1:
-              Provider.of<VoiceData>(context, listen: false).updateLangue('fr');
-              Get.toNamed('/Login');
-              break;
-            case 2:
-              Provider.of<VoiceData>(context, listen: false)
-                  .updateLangue('more');
-              Get.toNamed('/Login');
-              break;
-            case 3:
-              Provider.of<VoiceData>(context, listen: false)
-                  .updateLangue('dioula');
-              Get.toNamed('/Login');
-              break;
-            case 4:
-              Provider.of<VoiceData>(context, listen: false).updateLangue('en');
-              Get.toNamed('/Login');
-              break;
-            default:
-              Provider.of<VoiceData>(context, listen: false).updateLangue('fr');
+          if (Provider.of<VoiceData>(context, listen: false).reponse == 1) {
+            Provider.of<VoiceData>(context, listen: false).updateLangue('fr');
+            Get.toNamed('/Login');
+          }
+          if (Provider.of<VoiceData>(context, listen: false).reponse == 2) {
+            Provider.of<VoiceData>(context, listen: false).updateLangue('more');
+            Get.toNamed('/Login');
+          }
+          if (Provider.of<VoiceData>(context, listen: false).reponse == 3) {
+            Provider.of<VoiceData>(context, listen: false)
+                .updateLangue('dioula');
+            Get.toNamed('/Login');
+          }
+          if (Provider.of<VoiceData>(context, listen: false).reponse == 4) {
+            Provider.of<VoiceData>(context, listen: false).updateLangue('en');
+            Get.toNamed('/Login');
           }
         });
       }

@@ -25,7 +25,8 @@ class ChoixAdress extends StatefulWidget {
 class _ChoixAdressState extends State<ChoixAdress> {
   final AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
   Future _getThingsOnStartup() async {
-    playAudio();
+    if (Provider.of<VoiceData>(context, listen: false).activercommandeVocal)
+      playAudio();
     await Future.delayed(Duration(seconds: 20));
   }
 
