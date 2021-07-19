@@ -84,7 +84,7 @@ class AuthService {
                 content: Text('Votre Compte est En cours de Validation'));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           } else {
-            if (documentSnapshot.get("accountType") == "Coursier") {
+            if (documentSnapshot.get("AccountType") == "Coursier") {
               final snackBar = SnackBar(
                   content: Text('Bienvenue sur votre compte Coursier'));
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
