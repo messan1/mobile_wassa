@@ -146,7 +146,6 @@ class _AccountAccessState extends State<AccountAccess> {
                     Provider.of<VoiceData>(context, listen: false).langue],
                 Langue.type2[
                     Provider.of<VoiceData>(context, listen: false).langue],
-                
               ],
               title: Langue
                   .type[Provider.of<VoiceData>(context, listen: false).langue],
@@ -154,10 +153,14 @@ class _AccountAccessState extends State<AccountAccess> {
               onChanged: (value) {
                 print(value);
                 setState(() {
-                  if (value == "Coursier" || value == "Coursier")
-                    accountType = "Coursier";
-                  if (value == "Client") accountType = "Client";
-                  
+                  if (value ==
+                      Langue.type2[
+                          Provider.of<VoiceData>(context, listen: false)
+                              .langue]) accountType = "Coursier";
+                  if (value ==
+                      Langue.type1[
+                          Provider.of<VoiceData>(context, listen: false)
+                              .langue]) accountType = "Client";
                 });
               },
             ),

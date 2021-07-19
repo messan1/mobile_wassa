@@ -351,7 +351,7 @@ List<Map<String, dynamic>> transports = [
     'title': 'SUV',
     'image': 'cars.svg',
   },
-    {
+  {
     'title': 'Normal',
     'image': 'cars.svg',
   },
@@ -366,5 +366,4 @@ List<Map<String, dynamic>> yesorno = [
     'title': 'Non',
     'image': 'no.svg',
   },
-
 ];

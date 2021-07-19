@@ -10,7 +10,8 @@ import 'package:provider/provider.dart';
 import 'package:ucolis/src/DataHandler/loadingData.dart';
 import 'dart:async';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
-import 'package:ucolis/src/views/screens/OnboardingScreen/OnboardingScreen.dart';
+import 'package:ucolis/src/DataHandler/voiceData.dart';
+import 'package:ucolis/src/constants/constLangue.dart';
 import 'package:ucolis/src/views/screens/dashboard/dashboard.dart';
 import 'package:ucolis/src/views/screens/login/login.dart';
 import 'package:ucolis/src/views/screens/mapFromDeliver/mapFromDeliver.dart';
@@ -83,35 +84,42 @@ class AuthService {
         if (documentSnapshot.exists) {
           if (documentSnapshot.get("active") == false) {
             final snackBar = SnackBar(
-                content: Text('Votre Compte est En cours de Validation'));
+                content: Text(Langue.auth1[
+                    Provider.of<VoiceData>(context, listen: false).langue]));
             ScaffoldMessenger.of(context).showSnackBar(snackBar);
           } else {
             if (documentSnapshot.get("AccountType") == "Coursier") {
               final snackBar = SnackBar(
-                  content: Text('Bienvenue sur votre compte Coursier'));
+                  content: Text(Langue.auth2[
+                      Provider.of<VoiceData>(context, listen: false).langue]));
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
               Get.offAll(MapFromDeliver());
             } else {
-              final snackBar =
-                  SnackBar(content: Text('Bienvenue sur votre compte Client'));
+              final snackBar = SnackBar(
+                  content: Text(Langue.auth3[
+                      Provider.of<VoiceData>(context, listen: false).langue]));
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
               Get.offAll(Dashboard());
             }
           }
         } else {
-          final snackBar =
-              SnackBar(content: Text('vérifiez vos informations de connexion'));
+          final snackBar = SnackBar(
+              content: Text(Langue.con1[
+                  Provider.of<VoiceData>(context, listen: false).langue]));
         }
       });
     } on FirebaseAuthException catch (e) {
       Provider.of<LoadingData>(context, listen: false)
           .updateloadingState(ButtonState.fail);
       if (e.code == 'user-not-found') {
-        final snackBar =
-            SnackBar(content: Text("Aucun utilisateur n'existe avec ce mail"));
+        final snackBar = SnackBar(
+            content: Text(Langue
+                .auth4[Provider.of<VoiceData>(context, listen: false).langue]));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       } else if (e.code == 'wrong-password') {
-        final snackBar = SnackBar(content: Text("Mot de passe Incorrect"));
+        final snackBar = SnackBar(
+            content: Text(Langue
+                .auth5[Provider.of<VoiceData>(context, listen: false).langue]));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }
@@ -128,7 +136,9 @@ class AuthService {
     try {
       await _auth.sendPasswordResetEmail(email: email);
       final snackBar = SnackBar(
-          content: Text("Un email de confirmation à été envoyé sur $email"));
+          content: Text(Langue.auth6[
+                  Provider.of<VoiceData>(context, listen: false).langue] +
+              " $email"));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       Provider.of<LoadingData>(context, listen: false)
           .updateloadingState(ButtonState.idle);
@@ -136,8 +146,8 @@ class AuthService {
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         final snackBar = SnackBar(
-            content: Text(
-                "Il n'y a pas de fiche utilisateur correspondant à cet identifiant. L'utilisateur a peut-être été supprimé."));
+            content: Text(Langue
+                .auth7[Provider.of<VoiceData>(context, listen: false).langue]));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Provider.of<LoadingData>(context, listen: false)
             .updateloadingState(ButtonState.fail);
@@ -169,14 +179,16 @@ class AuthService {
       return user;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
-        final snackBar =
-            SnackBar(content: Text('Le mot de passe fourni est trop faible.'));
+        final snackBar = SnackBar(
+            content: Text(Langue
+                .auth8[Provider.of<VoiceData>(context, listen: false).langue]));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Provider.of<LoadingData>(context, listen: false)
             .updateloadingState(ButtonState.fail);
       } else if (e.code == 'email-already-in-use') {
-        final snackBar =
-            SnackBar(content: Text('Le compte existe déjà pour cet e-mail.'));
+        final snackBar = SnackBar(
+            content: Text(Langue
+                .auth9[Provider.of<VoiceData>(context, listen: false).langue]));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
         Provider.of<LoadingData>(context, listen: false)
             .updateloadingState(ButtonState.fail);
@@ -199,8 +211,9 @@ class AuthService {
         print(e);
         Provider.of<LoadingData>(context, listen: false)
             .updateloadingState(ButtonState.fail);
-        final snackBar =
-            SnackBar(content: Text('Erreur lors de la verification!'));
+        final snackBar = SnackBar(
+            content: Text(Langue.auth10[
+                Provider.of<VoiceData>(context, listen: false).langue]));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       },
       codeSent: (String verificationId, int resendToken) async {
@@ -227,7 +240,9 @@ class AuthService {
 
       // Update user data
       //updateUserData(user);
-      final snackBar = SnackBar(content: Text('Votre numero est verifie!'));
+      final snackBar = SnackBar(
+          content: Text(Langue
+              .auth11[Provider.of<VoiceData>(context, listen: false).langue]));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       if (Provider.of<UserAuth>(context, listen: false).authsocial == true) {
         Get.toNamed("/Information");
@@ -313,24 +328,30 @@ class AuthService {
           if (documentSnapshot.exists) {
             if (documentSnapshot.get("active") == false) {
               final snackBar = SnackBar(
-                  content: Text('Votre Compte est En cours de Validation'));
+                  content: Text(Langue.auth1[
+                      Provider.of<VoiceData>(context, listen: false).langue]));
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
             } else {
               if (documentSnapshot.get("accountType") == "Coursier") {
                 final snackBar = SnackBar(
-                    content: Text('Bienvenue sur votre compte Coursier'));
+                    content: Text(Langue.auth2[
+                        Provider.of<VoiceData>(context, listen: false)
+                            .langue]));
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 Get.offAll(MapFromDeliver());
               } else {
                 final snackBar = SnackBar(
-                    content: Text('Bienvenue sur votre compte Client'));
+                    content: Text(Langue.auth3[
+                        Provider.of<VoiceData>(context, listen: false)
+                            .langue]));
                 ScaffoldMessenger.of(context).showSnackBar(snackBar);
                 Get.offAll(Dashboard());
               }
             }
           } else {
             final snackBar = SnackBar(
-                content: Text('vérifiez vos informations de connexion'));
+                content: Text(Langue.con1[
+                    Provider.of<VoiceData>(context, listen: false).langue]));
           }
         });
       } else {
@@ -342,7 +363,9 @@ class AuthService {
           'uid': user.uid,
           'lastActivity': DateTime.now()
         }, SetOptions(merge: true)).onError((error, stackTrace) {
-          final snackBar = SnackBar(content: Text('Vérifiez vos informations'));
+          final snackBar = SnackBar(
+              content: Text(Langue.con1[
+                  Provider.of<VoiceData>(context, listen: false).langue]));
           ScaffoldMessenger.of(context).showSnackBar(snackBar);
         }).whenComplete(() {
           Provider.of<UserAuth>(context, listen: false)

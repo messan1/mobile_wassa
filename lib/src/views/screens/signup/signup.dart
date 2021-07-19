@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:provider/provider.dart';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
+import 'package:ucolis/src/DataHandler/voiceData.dart';
 import 'package:ucolis/src/app/scaffoldPlatform.dart';
+import 'package:ucolis/src/constants/constLangue.dart';
 import 'package:ucolis/src/services/auth.dart';
 import 'package:ucolis/src/views/components/simpleButtonLoading.dart';
 import 'package:ucolis/src/views/styles/styles.dart';
@@ -53,11 +55,14 @@ class _SignUpState extends State<SignUp> {
       leading: Container(),
       scaffoldState: _drawerKey,
       titleColor: Colors.black,
-      appBarTitle: "Entrez votre numéro",
+      appBarTitle:
+          Langue.ins1[Provider.of<VoiceData>(context, listen: false).langue],
       child: ListView(
         children: [
           Text(
-            "Etape 1/4",
+            Langue.etape[
+                    Provider.of<VoiceData>(context, listen: false).langue] +
+                " 1/4",
             textAlign: TextAlign.center,
             style: headerStyle,
           ),
@@ -107,12 +112,14 @@ class _SignUpState extends State<SignUp> {
             child: Column(
               children: [
                 Text(
-                    'Si vous Contnnnez vous recevrez peut etre un SMS de verification. Des Frais de message peuvent s appliquer',
+                    Langue.ins2[
+                        Provider.of<VoiceData>(context, listen: false).langue],
                     textAlign: TextAlign.center,
                     style: messagestyle),
                 SizedBox(height: 12),
                 SimpleButtonLoading(
-                    title: 'Inscription',
+                    title: Langue.ins[
+                        Provider.of<VoiceData>(context, listen: false).langue],
                     onTap: () => {
                           _auth.phoneauth(context),
                         },

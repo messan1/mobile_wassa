@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:get/route_manager.dart';
 import 'package:loader_overlay/loader_overlay.dart';
 import 'package:flutter/cupertino.dart';
@@ -29,25 +30,33 @@ class AddDocument extends StatefulWidget {
 
 class _AddDocumentState extends State<AddDocument> {
   DbService _internaldb = new DbService();
-  Future _getThingsOnStartup() async {
-    await Future.delayed(Duration(seconds: 1));
-  }
-
+  final AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
   @override
   void initState() {
-    _getThingsOnStartup().then((value) {
-      if (Provider.of<VoiceData>(context, listen: false).activercommandeVocal) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return VoiceDialogBox(
-                  audio: data[3]
-                      [Provider.of<VoiceData>(context, listen: false).langue],
-                  close: true);
-            }).then((value) {});
+    setupPlaylist();
+    if (Provider.of<VoiceData>(context, listen: false).activercommandeVocal)
+      playAudio();
+    super.initState();
+  }
+
+  void setupPlaylist() async {
+    List<Audio> arr = [];
+    for (String i in data[3]
+        [Provider.of<VoiceData>(context, listen: false).langue]) {
+      arr.add(Audio('assets/' + i));
+    }
+    audioPlayer.open(Playlist(audios: arr),
+        showNotification: false, autoStart: true);
+  }
+
+  playAudio() async {
+    await audioPlayer.play();
+    audioPlayer.playlistFinished.listen((finished) {
+      if (finished) {
+        print("fini");
+        //Navigator.of(context).pop();
       }
     });
-    super.initState();
   }
 
   @override
@@ -142,7 +151,6 @@ class _AddDocumentState extends State<AddDocument> {
                             Provider.of<VoiceData>(context, listen: false)
                                 .langue],
                         onTap: () {
-                          
                           _internaldb.uploadFiles(snapshot.data, context);
                         },
                         state: null,

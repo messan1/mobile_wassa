@@ -25,7 +25,7 @@ class DropButton extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 2),
           child: Text(
-            title.toLowerCase(),
+            title,
             style: inputStyle,
           ),
         ),
