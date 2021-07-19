@@ -12,6 +12,7 @@ import 'dart:async';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
+import 'package:ucolis/src/views/screens/OnboardingScreen/OnboardingScreen.dart';
 import 'package:ucolis/src/views/screens/dashboard/dashboard.dart';
 import 'package:ucolis/src/views/screens/login/login.dart';
 import 'package:ucolis/src/views/screens/mapFromDeliver/mapFromDeliver.dart';
