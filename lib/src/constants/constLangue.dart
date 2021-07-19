@@ -195,6 +195,129 @@ class Langue {
         "more": "Vérification des données"
       };
 
+  // AUTH SCREEN
+  static Map get auth1 => {
+        "fr": "Votre compte est en cours de validation",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth2 => {
+        "fr": "Bienvenue sur votre compte Coursier",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth3 => {
+        "fr": "Bienvenue sur votre compte Client",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth4 => {
+        "fr": "Aucun utilisateur n'existe avec cette adresse e-mail",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth5 => {
+        "fr": "Mot de passe incorrect",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth6 => {
+        "fr": "Un email de confirmation a été envoyé sur :",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth7 => {
+        "fr":
+            "Il n'y a pas de fiche utilisateur correspondant à cet identifiant. L'utilisateur a peut-être été supprimé.",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth8 => {
+        "fr": "Le mot de passe fourni est trop faible",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth9 => {
+        "fr": "Cette adresse e-mail est déjà utilisée par un  compte",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth10 => {
+        "fr": "Une erreur s'est produite au cours de la vérification",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth11 => {
+        "fr": "Votre numéro a bien été vérifié",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth12 => {
+        "fr": "Date",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth13 => {
+        "fr": "Date",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth14 => {
+        "fr": "Date",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth15 => {
+        "fr": "Date",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth16 => {
+        "fr": "Date",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth17 => {
+        "fr": "Date",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth18 => {
+        "fr": "Date",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth19 => {
+        "fr": "Date",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+  static Map get auth20 => {
+        "fr": "Date",
+        "en": "Log out",
+        "dioula": "Vérification des données",
+        "more": "Vérification des données"
+      };
+
   // ON BOARDING SCREEN
   static Map get ob1 => {
         "fr": "Vos déplacements au bout des doigts",
@@ -430,6 +553,79 @@ class Langue {
         "en": "Account access",
         "dioula": "Accès au compte",
         "more": "Accès au compte"
+      };
+  static Map get ins8 => {
+        "fr": "Votre véhicule",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get ins9 => {
+        "fr": "Type de véhicule",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get berline => {
+        "fr": "Berline",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get suv => {
+        "fr": "SUV",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get ins10 => {
+        "fr": "Votre véhicule a-il la climatisation ?",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get ins11 => {
+        "fr": "Votre véhicule est-il spacieux ?",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get ins12 => {
+        "fr": "Ouvrez-vous la portière à vos passagers ?",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get ins13 => {
+        "fr": "L'ouverture des vitres/glaces est-elle automatisée/électrique ?",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get ins14 => {
+        "fr":
+            "Proposez-vous de l'eau ou des mignardises (bonbons, gâteaux...) à vos passagers ?",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get ins15 => {
+        "fr": "Possédez-vous une prise USB pour charger un téléphone ?",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get yes => {
+        "fr": "Oui",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
+      };
+  static Map get no => {
+        "fr": "Non",
+        "en": "Continue",
+        "dioula": "Continuer",
+        "more": "Continuer"
       };
 
   // FORGET PASSWORD SCREEN

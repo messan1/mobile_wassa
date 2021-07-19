@@ -108,7 +108,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
 
     int _car = 1;
     return ScaffoldPlatform(
-      appBarTitle: "Informations sur votre véhicule",
+      appBarTitle:
+          Langue.ins8[Provider.of<VoiceData>(context, listen: false).langue],
       activeBackButton: false,
       child: SafeArea(
         child: ListView(
@@ -120,7 +121,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title: 'Type de Véhicule',
+                  title: Langue.ins9[
+                      Provider.of<VoiceData>(context, listen: false).langue],
                   placeholder:
                       Provider.of<UserAuth>(context, listen: true).typeVehicule,
                   modalType: S2ModalType.bottomSheet,
@@ -181,7 +183,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title: 'Votre voiture a t-elle la climatisation?',
+                  title: Langue.ins10[
+                      Provider.of<VoiceData>(context, listen: false).langue],
                   placeholder: Provider.of<UserAuth>(context, listen: true)
                       .climatisation,
                   modalType: S2ModalType.bottomSheet,
@@ -242,7 +245,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title: 'Votre voiture est-elle spacieuse?',
+                  title: Langue.ins11[
+                      Provider.of<VoiceData>(context, listen: false).langue],
                   placeholder:
                       Provider.of<UserAuth>(context, listen: true).space,
                   modalType: S2ModalType.bottomSheet,
@@ -303,7 +307,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title: 'Ouvrez-vous la portière à vos passagers?',
+                  title: Langue.ins12[
+                      Provider.of<VoiceData>(context, listen: false).langue],
                   placeholder:
                       Provider.of<UserAuth>(context, listen: true).portiere,
                   modalType: S2ModalType.bottomSheet,
@@ -364,8 +369,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title:
-                      'L’ouverture des vitres/glaces est-elle automatisée/électrique?',
+                  title: Langue.ins13[
+                      Provider.of<VoiceData>(context, listen: false).langue],
                   placeholder:
                       Provider.of<UserAuth>(context, listen: true).vitre,
                   modalType: S2ModalType.bottomSheet,
@@ -426,8 +431,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title:
-                      'Proposez vous de l’eau ou des mignardises(bonbons/gâteaux) à  vos passagers?',
+                  title: Langue.ins14[
+                      Provider.of<VoiceData>(context, listen: false).langue],
                   placeholder:
                       Provider.of<UserAuth>(context, listen: true).candy,
                   modalType: S2ModalType.bottomSheet,
@@ -488,8 +493,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title:
-                      'Possédez-vous une prise USB pour charger un téléphone?',
+                  title: Langue.ins15[
+                      Provider.of<VoiceData>(context, listen: false).langue],
                   placeholder: Provider.of<UserAuth>(context, listen: true).usb,
                   modalType: S2ModalType.bottomSheet,
                   modalHeader: false,

@@ -161,6 +161,16 @@ class _VoiceDialogBoxState extends State<VoiceDialogBox> {
                           //maxLength: 1,
                           textAlign: TextAlign.center,
                           maxLines: 1,
+                          onChanged: (val) => {
+                                Provider.of<VoiceData>(context, listen: false)
+                                    .updateResponse(int.parse(val)),
+                                print('Reponse : ' +
+                                    Provider.of<VoiceData>(context,
+                                            listen: false)
+                                        .reponse
+                                        .toString()),
+                                Navigator.of(context).pop(),
+                              },
                           style: new TextStyle(
                               color: blueFont,
                               fontSize: 30,

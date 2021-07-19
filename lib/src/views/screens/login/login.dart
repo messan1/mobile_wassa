@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,27 +39,35 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  Future _getThingsOnStartup() async {
-    await Future.delayed(Duration(seconds: 1));
-  }
-
+  final AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
   @override
   void initState() {
     Provider.of<LoadingData>(context, listen: false)
         .updateloadingState(ButtonState.idle);
-    _getThingsOnStartup().then((value) {
-      if (Provider.of<VoiceData>(context, listen: false).activercommandeVocal) {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return VoiceDialogBox(
-                  audio: data[2]
-                      [Provider.of<VoiceData>(context, listen: false).langue],
-                  close: false);
-            }).then((value) {});
+    setupPlaylist();
+    if (Provider.of<VoiceData>(context, listen: false).activercommandeVocal)
+      playAudio();
+    super.initState();
+  }
+
+  void setupPlaylist() async {
+    List<Audio> arr = [];
+    for (String i in data[2]
+        [Provider.of<VoiceData>(context, listen: false).langue]) {
+      arr.add(Audio('assets/' + i));
+    }
+    audioPlayer.open(Playlist(audios: arr),
+        showNotification: false, autoStart: true);
+  }
+
+  playAudio() async {
+    await audioPlayer.play();
+    audioPlayer.playlistFinished.listen((finished) {
+      if (finished) {
+        print("fini");
+        //Navigator.of(context).pop();
       }
     });
-    super.initState();
   }
 
   var logger = Logger();
@@ -139,7 +148,6 @@ class _LoginState extends State<Login> {
                     title: Langue.con[
                         Provider.of<VoiceData>(context, listen: false).langue],
                     onTap: () => {
-                  
                           _auth.emailAuthLogin(
                               context, email.text, password.text)
                         },

@@ -15,8 +15,6 @@ import 'package:ucolis/src/views/screens/signup/components/numericPad.dart';
 import 'package:ucolis/src/views/screens/styles/styles.dart';
 
 class VerificationCode extends StatefulWidget {
-
-
   const VerificationCode({Key key}) : super(key: key);
 
   @override
@@ -55,7 +53,7 @@ class _VerificationCodeState extends State<VerificationCode> {
 
   @override
   void initState() {
-    phone = "+225" + Provider.of<UserAuth>(context, listen: false).phoneNumber;
+    phone = Provider.of<UserAuth>(context, listen: false).phoneNumber;
 
     _startTimer();
     final _userBloc = Provider.of<UserBloc>(context, listen: false);
