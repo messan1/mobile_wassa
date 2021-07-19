@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/route_manager.dart';
 import 'package:provider/provider.dart';
+import 'package:ucolis/src/DataHandler/userAuth.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
 import 'package:ucolis/src/app/scaffoldPlatform.dart';
 import 'package:ucolis/src/constants/constAudio.dart';
@@ -64,6 +65,7 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
+   
     return ScaffoldPlatform(
         drawer: UcolisDrawer(),
         scaffoldState: _drawerKey,

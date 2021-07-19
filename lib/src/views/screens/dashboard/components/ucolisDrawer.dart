@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:ucolis/src/DataHandler/userAuth.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
 import 'package:ucolis/src/constants/constString.dart';
+import 'package:ucolis/src/services/auth.dart';
 import 'package:ucolis/src/utils/sizeCalculator.dart';
 import 'package:ucolis/src/views/components/extendedContainer.dart';
 import 'package:ucolis/src/views/components/profilePicture.dart';
@@ -18,6 +20,8 @@ class UcolisDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String imagePath = 'assets/profile.jpg';
+    AuthService auth = AuthService();
+
     return Drawer(
       child: Stack(
         children: [
@@ -30,11 +34,12 @@ class UcolisDrawer extends StatelessWidget {
                 child: UserAccountsDrawerHeader(
                   decoration: BoxDecoration(color: blackFont),
                   accountName: Text(
-                    'Yanne'.toUpperCase(),
+                    Provider.of<UserAuth>(context, listen: false).firstname.toUpperCase() ?? "",
+                  
                     style: nameMenuStyle,
                   ),
                   accountEmail: Text(
-                    'yannsid2@outlook.com',
+                    auth.getUser.email ?? 'null@null.com',
                     style: mailMenuStyle,
                   ),
                   currentAccountPicture: Stack(
@@ -81,7 +86,9 @@ class UcolisDrawer extends StatelessWidget {
           ),
           Positioned(
             child: GestureDetector(
-              onTap: () {},
+              onTap: () {
+                auth.signOut();
+              },
               child: ExtendedContainer(
                 padding: EdgeInsets.only(left: 13.0.w, bottom: 15, top: 15),
                 width: SC.width(),

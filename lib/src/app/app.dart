@@ -1,12 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:ucolis/src/DataHandler/appData.dart';
 import 'package:ucolis/src/DataHandler/loadingData.dart';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
+import 'package:ucolis/src/Model/Global.dart';
 import 'package:ucolis/src/app/platformApp.dart';
 import 'package:sizer/sizer.dart';
 import 'package:ucolis/src/blocs/userBloc.dart';
+import 'package:ucolis/src/services/auth.dart';
 
 final _userBloc = UserBloc();
 
@@ -47,6 +50,10 @@ class _AppState extends State<App> {
               create: (context) => VoiceData(),
             ),
             Provider(create: (context) => _userBloc),
+            StreamProvider<User>.value(
+              value: AuthService().user,
+              initialData: null,
+            ),
           ],
         );
       },

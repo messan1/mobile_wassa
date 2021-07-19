@@ -10,7 +10,9 @@ import 'package:provider/provider.dart';
 import 'package:ucolis/src/DataHandler/loadingData.dart';
 import 'dart:async';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
+import 'package:ucolis/src/views/screens/OnboardingScreen/OnboardingScreen.dart';
 import 'package:ucolis/src/views/screens/dashboard/dashboard.dart';
+import 'package:ucolis/src/views/screens/login/login.dart';
 import 'package:ucolis/src/views/screens/mapFromDeliver/mapFromDeliver.dart';
 
 import 'db.dart';
@@ -97,8 +99,8 @@ class AuthService {
             }
           }
         } else {
-                 final snackBar = SnackBar(
-                  content: Text('vérifiez vos informations de connexion'));
+          final snackBar =
+              SnackBar(content: Text('vérifiez vos informations de connexion'));
         }
       });
     } on FirebaseAuthException catch (e) {
@@ -354,8 +356,52 @@ class AuthService {
 
   // Sign out
   Future<void> signOut() {
-    return _auth.signOut();
+    _auth.signOut();
+    Get.offAll(Login());
   }
 
-  Future<void> uploadProfile() async {}
+  Future<void> uploadProfile(context) async {}
+
+  Future<User> authPersistchecker(String uid, context) async {
+    try {
+      FirebaseFirestore.instance
+          .collection('users_data')
+          .doc(uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          print(documentSnapshot);
+          if (documentSnapshot.get("active") == false) {
+          } else {
+            if (documentSnapshot.get("AccountType") == "Coursier") {
+              Provider.of<UserAuth>(context, listen: false).updateUsername(
+                  documentSnapshot.get("firstname"),
+                  documentSnapshot.get("lastname"),
+                  documentSnapshot.get("bithday"));
+              Provider.of<UserAuth>(context, listen: false)
+                  .updatePhone(documentSnapshot.get("phone"));
+
+              Provider.of<UserAuth>(context, listen: false)
+                  .updateRole(documentSnapshot.get("AccountType"));
+
+              Provider.of<UserAuth>(context, listen: false)
+                  .updateProfileImage(documentSnapshot.get("profile"));
+
+              Provider.of<UserAuth>(context, listen: false)
+                  .updateUserUudi(documentSnapshot.get("uid"));
+
+              Get.offAll(MapFromDeliver());
+            } else {
+              Get.offAll(Dashboard());
+            }
+          }
+        } else {
+          Get.offAll(OnboardingScreen());
+        }
+      });
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+      } else if (e.code == 'wrong-password') {}
+    }
+  }
 }

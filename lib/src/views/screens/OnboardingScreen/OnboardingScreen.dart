@@ -6,8 +6,10 @@ import 'package:provider/provider.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
 import 'package:ucolis/src/constants/constAudio.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
+import 'package:ucolis/src/services/auth.dart';
 import 'package:ucolis/src/utils/Assistance/AuthAssistanceMethods.dart';
 import 'package:ucolis/src/views/components/voiceCommand.dart';
+import 'package:ucolis/src/views/screens/dashboard/dashboard.dart';
 import 'package:ucolis/src/views/screens/language/language.dart';
 import 'package:ucolis/src/views/styles/styles.dart';
 
@@ -17,6 +19,7 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+
   final int _numofpage = 3;
   final PageController _pageController = PageController(initialPage: 0);
   int _currentpage = 0;
@@ -43,6 +46,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   void initState() {
+
     _getThingsOnStartup().then((value) {
       if (Provider.of<VoiceData>(context, listen: false).activercommandeVocal) {
         showDialog(

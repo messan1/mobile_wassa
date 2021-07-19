@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_analytics/observer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -12,6 +14,9 @@ class PlatformApp extends StatelessWidget {
         //SizerUtil().init(constraints, orientation);
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
+          navigatorObservers: [
+            FirebaseAnalyticsObserver(analytics: FirebaseAnalytics()),
+          ],
           builder: EasyLoading.init(),
           getPages: AppRoutes.routes,
           initialRoute: '/',
