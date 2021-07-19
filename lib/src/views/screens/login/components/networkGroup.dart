@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:ucolis/src/services/auth.dart';
@@ -16,21 +18,19 @@ class NetworkGroup extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        ConnectWithSocialNetwork(
-          fontAwesomeIcons: FontAwesomeIcons.facebook,
-          onTap: () {
-            auth.facebookSignIn();
-          },
-        ),
-        ConnectWithSocialNetwork(
-          fontAwesomeIcons: FontAwesomeIcons.twitter,
-          onTap: () {},
-        ),
+        Platform.isIOS == true
+            ? ConnectWithSocialNetwork(
+                fontAwesomeIcons: FontAwesomeIcons.apple,
+                onTap: () {
+                  auth.appleSignIn();
+                },
+              )
+            : Container(),
         ConnectWithSocialNetwork(
           fontAwesomeIcons: FontAwesomeIcons.google,
           onTap: () async {
             // await AuthService.googleSignIn();
-            auth.googleSignIn();
+            auth.googleSignIn(context);
           },
         ),
       ],

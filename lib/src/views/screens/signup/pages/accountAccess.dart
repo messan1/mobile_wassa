@@ -82,7 +82,8 @@ class _AccountAccessState extends State<AccountAccess> {
 
       super.initState();
     }
-_passNextPage() async {
+
+    _passNextPage() async {
       // ignore: unrelated_type_equality_checks
       if (password.text.isNotEmpty &&
           password.text == confirmpassword.text &&
@@ -144,7 +145,8 @@ _passNextPage() async {
                 Langue.type1[
                     Provider.of<VoiceData>(context, listen: false).langue],
                 Langue.type2[
-                    Provider.of<VoiceData>(context, listen: false).langue]
+                    Provider.of<VoiceData>(context, listen: false).langue],
+                    "Taxi"
               ],
               title: Langue
                   .type[Provider.of<VoiceData>(context, listen: false).langue],
@@ -155,6 +157,7 @@ _passNextPage() async {
                   if (value == "Coursier" || value == "Coursier")
                     accountType = "Coursier";
                   if (value == "Client") accountType = "Client";
+                  if (value == "Taxi") accountType = "Taxi";
                 });
               },
             ),

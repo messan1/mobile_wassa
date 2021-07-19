@@ -52,7 +52,7 @@ class DbService {
         final snackBar = SnackBar(content: Text('Vérifiez vos informations'));
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }).whenComplete(() => {
-                updateUserInfoData(context, name),
+                updateUserInfoDataInfo(context, name),
                 Provider.of<LoadingData>(context, listen: false)
                     .updateloadingState(ButtonState.idle)
               });
@@ -69,6 +69,8 @@ class DbService {
       'uid': userUuuid,
       'lastActivity': DateTime.now(),
       'email': Provider.of<UserAuth>(context, listen: false).email,
+      'phone': Provider.of<UserAuth>(context, listen: false).phoneNumber,
+      'active': false,
       'accountType': Provider.of<UserAuth>(context, listen: false).role,
     }, SetOptions(merge: true));
   }
@@ -91,6 +93,31 @@ class DbService {
               'Félicitation pour votre inscription vous pouvez vous connecter'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       Get.toNamed('/Login');
+    } else {
+      // Get.toNamed('/AddDocument');
+    }
+  }
+
+  Future<void> updateUserInfoDataInfo(context, String profile) {
+    String userUuuid = Provider.of<UserAuth>(context, listen: false).useruuid;
+    DocumentReference reportRef = _db.collection('users_data').doc(userUuuid);
+
+    reportRef.set({
+      'uid': userUuuid,
+      'profile': profile,
+      'firstname': Provider.of<UserAuth>(context, listen: false).firstname,
+      'lastname': Provider.of<UserAuth>(context, listen: false).lastname,
+      'birthday': Provider.of<UserAuth>(context, listen: false).bith,
+      'lastActivity': DateTime.now(),
+    }, SetOptions(merge: true));
+    if (Provider.of<UserAuth>(context, listen: false).role == "Client") {
+      final snackBar = SnackBar(
+          content: Text(
+              'Félicitation pour votre inscription vous pouvez vous connecter'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Get.toNamed('/Login');
+    } else if (Provider.of<UserAuth>(context, listen: false).role == "Taxi") {
+      Get.toNamed('/InfoVehicule');
     } else {
       Get.toNamed('/AddDocument');
     }
@@ -148,5 +175,37 @@ class DbService {
     } catch (e) {
       // e.g, e.code == 'canceled'
     }
+  }
+
+  Future<void> updateUserInfoCarData(context) {
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.loading);
+    String userUuuid = Provider.of<UserAuth>(context, listen: false).useruuid;
+    DocumentReference reportRef = _db.collection('users_data').doc(userUuuid);
+    reportRef.set({
+      'uid': userUuuid,
+      "carInfo": {
+        'typeVehicule':
+            Provider.of<UserAuth>(context, listen: false).typeVehicule,
+        'climatisation':
+            Provider.of<UserAuth>(context, listen: false).climatisation,
+        'portiere': Provider.of<UserAuth>(context, listen: false).portiere,
+        'vitre': Provider.of<UserAuth>(context, listen: false).vitre,
+        'candy': Provider.of<UserAuth>(context, listen: false).candy,
+        'usb': Provider.of<UserAuth>(context, listen: false).usb,
+        'space': Provider.of<UserAuth>(context, listen: false).space,
+      },
+      'lastActivity': DateTime.now(),
+    }, SetOptions(merge: true)).onError((error, stackTrace) {
+      final snackBar = SnackBar(content: Text('Une erreur est survenue'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      Provider.of<LoadingData>(context, listen: false)
+          .updateloadingState(ButtonState.fail);
+    }).whenComplete(() => {
+          Provider.of<LoadingData>(context, listen: false)
+              .updateloadingState(ButtonState.idle),
+          Get.toNamed("/AddDocument")
+        });
   }
 }

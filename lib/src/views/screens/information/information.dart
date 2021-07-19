@@ -14,6 +14,7 @@ import 'package:ucolis/src/blocs/userBloc.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
 import 'package:ucolis/src/services/db.dart';
 import 'package:ucolis/src/utils/Assistance/AuthAssistanceMethods.dart';
+import 'package:ucolis/src/views/screens/Auth/components/dropDownButton.dart';
 import 'package:ucolis/src/views/screens/Auth/components/imageLoader.dart';
 import 'package:ucolis/src/views/screens/Auth/components/platformTextFieldForm.dart';
 import 'package:ucolis/src/views/screens/Auth/components/verticalSeparator.dart';
@@ -29,7 +30,8 @@ class Information extends StatefulWidget {
 
 class _InformationState extends State<Information> {
   TextEditingController _dateController = TextEditingController();
-  DateTime bithdate = null;
+  String accountType = "Client";
+
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
   File image;
@@ -40,7 +42,6 @@ class _InformationState extends State<Information> {
         onConfirm: (date) {
       _dateController.text = date.toString().substring(0, 11);
     }, currentTime: DateTime.now(), locale: LocaleType.fr);
-    print(bithdate.toString());
   }
 
   @override
@@ -97,7 +98,10 @@ class _InformationState extends State<Information> {
       _userBloc.bithday.listen((event) {
         bith = event;
       });
-
+      _lastnameController.text =
+          Provider.of<UserAuth>(context, listen: false).lastname;
+      _firstnameController.text =
+          Provider.of<UserAuth>(context, listen: false).lastname;
       super.initState();
     }
 
@@ -110,7 +114,7 @@ class _InformationState extends State<Information> {
             _lastnameController.text,
             _firstnameController.text,
             _dateController.text);
-        _db.uploadFile(context,image);
+        _db.uploadFile(context, image);
 
         //var response = await AuthAssistanceMethods.signupUser(context);
 
@@ -219,6 +223,32 @@ class _InformationState extends State<Information> {
                 )
               ],
             ),
+            VerticalSeparator(),
+            Provider.of<UserAuth>(context, listen: false).authsocial == true
+                ? DropButton(
+                    items: [
+                      Langue.type1[
+                          Provider.of<VoiceData>(context, listen: false)
+                              .langue],
+                      Langue.type2[
+                          Provider.of<VoiceData>(context, listen: false)
+                              .langue],
+                      "Taxi"
+                    ],
+                    title: Langue.type[
+                        Provider.of<VoiceData>(context, listen: false).langue],
+                    value: accountType,
+                    onChanged: (value) {
+                    
+                      setState(() {
+                        if (value == "Coursier" || value == "Coursier")
+                          accountType = "Coursier";
+                        if (value == "Client") accountType = "Client";
+                        if (value == "Taxi") accountType = "Taxi";
+                      });
+                    },
+                  )
+                : Container(),
             VerticalSeparator(),
             Column(
               mainAxisAlignment: MainAxisAlignment.center,

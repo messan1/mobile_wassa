@@ -102,25 +102,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
       super.initState();
     }
 
-    _Save() async {
-      if (_firstnameController.text.isNotEmpty &&
-          _lastnameController.text.isNotEmpty &&
-          _dateController.text.isNotEmpty &&
-          image != null) {
-        Provider.of<UserAuth>(context, listen: false).updateUsername(
-            _lastnameController.text,
-            _firstnameController.text,
-            _dateController.text);
-        _db.uploadFile(context, image);
-
-        //var response = await AuthAssistanceMethods.signupUser(context);
-
-      } else {
-        _disableLoading();
-
-        _showError(Langue
-            .verif6[Provider.of<VoiceData>(context, listen: false).langue]);
-      }
+    _Save(context) async {
+      await _db.updateUserInfoCarData(context);
     }
 
     int _car = 1;
@@ -143,7 +126,7 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                   modalType: S2ModalType.bottomSheet,
                   modalHeader: false,
                   choiceItems: S2Choice.listFrom<int, Map<String, dynamic>>(
-                    source: choices.transports,
+                    source: choices.yesorno,
                     value: (index, item) => index,
                     title: (index, item) => item['title'],
                     subtitle: (index, item) => item['subtitle'],
@@ -188,7 +171,7 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                     return S2Tile.fromState(
                       state,
                       isTwoLine: true,
-                      leading: WebsafeSvg.asset("assets/icon/cars.svg",
+                      leading: WebsafeSvg.asset("assets/icon/cartype.svg",
                           height: 5.5.h),
                     );
                   },
@@ -198,13 +181,13 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title: 'Disposez-vous de la climatisation',
-                  placeholder:
-                      Provider.of<UserAuth>(context, listen: true).typeVehicule,
+                  title: 'Votre voiture a t-elle la climatisation?',
+                  placeholder: Provider.of<UserAuth>(context, listen: true)
+                      .climatisation,
                   modalType: S2ModalType.bottomSheet,
                   modalHeader: false,
                   choiceItems: S2Choice.listFrom<int, Map<String, dynamic>>(
-                    source: choices.transports,
+                    source: choices.yesorno,
                     value: (index, item) => index,
                     title: (index, item) => item['title'],
                     subtitle: (index, item) => item['subtitle'],
@@ -218,8 +201,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                       child: InkWell(
                         onTap: () => {
                           Provider.of<UserAuth>(context, listen: false)
-                              .updateVehicule(choices
-                                  .transports[state.value].entries.first.value),
+                              .updateVehiculeClimatisation(choices
+                                  .yesorno[state.value].entries.first.value),
                           Navigator.pop(context)
                         },
                         child: SizedBox(
@@ -231,11 +214,11 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                               children: <Widget>[
                                 const SizedBox(height: 5),
                                 WebsafeSvg.asset(
-                                    "assets/icon/${choices.transports[state.value].entries.last.value}",
+                                    "assets/icon/${choices.yesorno[state.value].entries.last.value}",
                                     height: 5.5.h),
                                 Text(
-                                  choices.transports[state.value].entries.first
-                                      .value,
+                                  choices
+                                      .yesorno[state.value].entries.first.value,
                                   style: TextStyle(),
                                 ),
                               ],
@@ -249,9 +232,7 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                     return S2Tile.fromState(
                       state,
                       isTwoLine: true,
-                      leading: WebsafeSvg.asset(
-                          "assets/icon/air-conditioner.svg",
-                          width: 9.5.h,
+                      leading: WebsafeSvg.asset("assets/icon/refrigerant.svg",
                           height: 5.5.h),
                     );
                   },
@@ -261,13 +242,13 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title: 'Type de Véhicule',
+                  title: 'Votre voiture est-elle spacieuse?',
                   placeholder:
-                      Provider.of<UserAuth>(context, listen: true).typeVehicule,
+                      Provider.of<UserAuth>(context, listen: true).space,
                   modalType: S2ModalType.bottomSheet,
                   modalHeader: false,
                   choiceItems: S2Choice.listFrom<int, Map<String, dynamic>>(
-                    source: choices.transports,
+                    source: choices.yesorno,
                     value: (index, item) => index,
                     title: (index, item) => item['title'],
                     subtitle: (index, item) => item['subtitle'],
@@ -281,8 +262,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                       child: InkWell(
                         onTap: () => {
                           Provider.of<UserAuth>(context, listen: false)
-                              .updateVehicule(choices
-                                  .transports[state.value].entries.first.value),
+                              .updateVehiculeSpace(choices
+                                  .yesorno[state.value].entries.first.value),
                           Navigator.pop(context)
                         },
                         child: SizedBox(
@@ -294,11 +275,11 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                               children: <Widget>[
                                 const SizedBox(height: 5),
                                 WebsafeSvg.asset(
-                                    "assets/icon/${choices.transports[state.value].entries.last.value}",
+                                    "assets/icon/${choices.yesorno[state.value].entries.last.value}",
                                     height: 5.5.h),
                                 Text(
-                                  choices.transports[state.value].entries.first
-                                      .value,
+                                  choices
+                                      .yesorno[state.value].entries.first.value,
                                   style: TextStyle(),
                                 ),
                               ],
@@ -312,7 +293,7 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                     return S2Tile.fromState(
                       state,
                       isTwoLine: true,
-                      leading: WebsafeSvg.asset("assets/icon/cars.svg",
+                      leading: WebsafeSvg.asset("assets/icon/van.svg",
                           height: 5.5.h),
                     );
                   },
@@ -322,13 +303,13 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title: 'Type de Véhicule',
+                  title: 'Ouvrez-vous la portière à vos passagers?',
                   placeholder:
-                      Provider.of<UserAuth>(context, listen: true).typeVehicule,
+                      Provider.of<UserAuth>(context, listen: true).portiere,
                   modalType: S2ModalType.bottomSheet,
                   modalHeader: false,
                   choiceItems: S2Choice.listFrom<int, Map<String, dynamic>>(
-                    source: choices.transports,
+                    source: choices.yesorno,
                     value: (index, item) => index,
                     title: (index, item) => item['title'],
                     subtitle: (index, item) => item['subtitle'],
@@ -342,8 +323,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                       child: InkWell(
                         onTap: () => {
                           Provider.of<UserAuth>(context, listen: false)
-                              .updateVehicule(choices
-                                  .transports[state.value].entries.first.value),
+                              .updateVehiculePortiere(choices
+                                  .yesorno[state.value].entries.first.value),
                           Navigator.pop(context)
                         },
                         child: SizedBox(
@@ -355,11 +336,11 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                               children: <Widget>[
                                 const SizedBox(height: 5),
                                 WebsafeSvg.asset(
-                                    "assets/icon/${choices.transports[state.value].entries.last.value}",
+                                    "assets/icon/${choices.yesorno[state.value].entries.last.value}",
                                     height: 5.5.h),
                                 Text(
-                                  choices.transports[state.value].entries.first
-                                      .value,
+                                  choices
+                                      .yesorno[state.value].entries.first.value,
                                   style: TextStyle(),
                                 ),
                               ],
@@ -373,7 +354,7 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                     return S2Tile.fromState(
                       state,
                       isTwoLine: true,
-                      leading: WebsafeSvg.asset("assets/icon/cars.svg",
+                      leading: WebsafeSvg.asset("assets/icon/car-door.svg",
                           height: 5.5.h),
                     );
                   },
@@ -383,13 +364,14 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title: 'Type de Véhicule',
+                  title:
+                      'L’ouverture des vitres/glaces est-elle automatisée/électrique?',
                   placeholder:
-                      Provider.of<UserAuth>(context, listen: true).typeVehicule,
+                      Provider.of<UserAuth>(context, listen: true).vitre,
                   modalType: S2ModalType.bottomSheet,
                   modalHeader: false,
                   choiceItems: S2Choice.listFrom<int, Map<String, dynamic>>(
-                    source: choices.transports,
+                    source: choices.yesorno,
                     value: (index, item) => index,
                     title: (index, item) => item['title'],
                     subtitle: (index, item) => item['subtitle'],
@@ -403,8 +385,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                       child: InkWell(
                         onTap: () => {
                           Provider.of<UserAuth>(context, listen: false)
-                              .updateVehicule(choices
-                                  .transports[state.value].entries.first.value),
+                              .updateVehiculeVitre(choices
+                                  .yesorno[state.value].entries.first.value),
                           Navigator.pop(context)
                         },
                         child: SizedBox(
@@ -416,11 +398,11 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                               children: <Widget>[
                                 const SizedBox(height: 5),
                                 WebsafeSvg.asset(
-                                    "assets/icon/${choices.transports[state.value].entries.last.value}",
+                                    "assets/icon/${choices.yesorno[state.value].entries.last.value}",
                                     height: 5.5.h),
                                 Text(
-                                  choices.transports[state.value].entries.first
-                                      .value,
+                                  choices
+                                      .yesorno[state.value].entries.first.value,
                                   style: TextStyle(),
                                 ),
                               ],
@@ -434,7 +416,7 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                     return S2Tile.fromState(
                       state,
                       isTwoLine: true,
-                      leading: WebsafeSvg.asset("assets/icon/cars.svg",
+                      leading: WebsafeSvg.asset("assets/icon/car-window.svg",
                           height: 5.5.h),
                     );
                   },
@@ -444,13 +426,14 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                 SmartSelect<int>.single(
                   onChange: (selected) => setState(() => _car = selected.value),
                   modalConfirm: true,
-                  title: 'Type de Véhicule',
+                  title:
+                      'Proposez vous de l’eau ou des mignardises(bonbons/gâteaux) à  vos passagers?',
                   placeholder:
-                      Provider.of<UserAuth>(context, listen: true).typeVehicule,
+                      Provider.of<UserAuth>(context, listen: true).candy,
                   modalType: S2ModalType.bottomSheet,
                   modalHeader: false,
                   choiceItems: S2Choice.listFrom<int, Map<String, dynamic>>(
-                    source: choices.transports,
+                    source: choices.yesorno,
                     value: (index, item) => index,
                     title: (index, item) => item['title'],
                     subtitle: (index, item) => item['subtitle'],
@@ -464,8 +447,8 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                       child: InkWell(
                         onTap: () => {
                           Provider.of<UserAuth>(context, listen: false)
-                              .updateVehicule(choices
-                                  .transports[state.value].entries.first.value),
+                              .updateVehiculeCandy(choices
+                                  .yesorno[state.value].entries.first.value),
                           Navigator.pop(context)
                         },
                         child: SizedBox(
@@ -477,11 +460,11 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                               children: <Widget>[
                                 const SizedBox(height: 5),
                                 WebsafeSvg.asset(
-                                    "assets/icon/${choices.transports[state.value].entries.last.value}",
+                                    "assets/icon/${choices.yesorno[state.value].entries.last.value}",
                                     height: 5.5.h),
                                 Text(
-                                  choices.transports[state.value].entries.first
-                                      .value,
+                                  choices
+                                      .yesorno[state.value].entries.first.value,
                                   style: TextStyle(),
                                 ),
                               ],
@@ -495,7 +478,68 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                     return S2Tile.fromState(
                       state,
                       isTwoLine: true,
-                      leading: WebsafeSvg.asset("assets/icon/cars.svg",
+                      leading: WebsafeSvg.asset("assets/icon/candies.svg",
+                          height: 5.5.h),
+                    );
+                  },
+                  value: null,
+                ),
+                VerticalSeparator(),
+                SmartSelect<int>.single(
+                  onChange: (selected) => setState(() => _car = selected.value),
+                  modalConfirm: true,
+                  title:
+                      'Possédez-vous une prise USB pour charger un téléphone?',
+                  placeholder: Provider.of<UserAuth>(context, listen: true).usb,
+                  modalType: S2ModalType.bottomSheet,
+                  modalHeader: false,
+                  choiceItems: S2Choice.listFrom<int, Map<String, dynamic>>(
+                    source: choices.yesorno,
+                    value: (index, item) => index,
+                    title: (index, item) => item['title'],
+                    subtitle: (index, item) => item['subtitle'],
+                    meta: (index, item) => item,
+                  ),
+                  choiceLayout: S2ChoiceLayout.wrap,
+                  choiceDirection: Axis.horizontal,
+                  choiceBuilder: (context, state, choice) {
+                    return Card(
+                      margin: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+                      child: InkWell(
+                        onTap: () => {
+                          Provider.of<UserAuth>(context, listen: false)
+                              .updateVehiculeUsb(choices
+                                  .yesorno[state.value].entries.first.value),
+                          Navigator.pop(context)
+                        },
+                        child: SizedBox(
+                          width: 100,
+                          height: 100,
+                          child: Center(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                const SizedBox(height: 5),
+                                WebsafeSvg.asset(
+                                    "assets/icon/${choices.yesorno[state.value].entries.last.value}",
+                                    height: 5.5.h),
+                                Text(
+                                  choices
+                                      .yesorno[state.value].entries.first.value,
+                                  style: TextStyle(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  tileBuilder: (context, state) {
+                    return S2Tile.fromState(
+                      state,
+                      isTwoLine: true,
+                      leading: WebsafeSvg.asset("assets/icon/charge.svg",
                           height: 5.5.h),
                     );
                   },
@@ -514,7 +558,7 @@ class _InfoVehiculeState extends State<InfoVehicule> {
                       Provider.of<VoiceData>(context, listen: false).langue],
                   onTap: () {
                     // _showLoading();
-                    _Save();
+                    _Save(context);
                   },
                   state: null,
                 ),

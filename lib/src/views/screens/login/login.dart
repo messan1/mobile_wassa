@@ -139,10 +139,7 @@ class _LoginState extends State<Login> {
                     title: Langue.con[
                         Provider.of<VoiceData>(context, listen: false).langue],
                     onTap: () => {
-                          //  _auth.phoneauth(context),
-                          //  Get.offAll(MapFromDeliver());
-
-                          //Get.toNamed('/dashboard');
+                  
                           _auth.emailAuthLogin(
                               context, email.text, password.text)
                         },
@@ -167,9 +164,7 @@ class _LoginState extends State<Login> {
                   title: Langue.forget[
                       Provider.of<VoiceData>(context, listen: false).langue],
                   onTap: () async {
-                    Map<Permission, PermissionStatus> statuses =
-                        await [Permission.photos].request();
-                    print(statuses[Permission.photos]);
+                    Get.toNamed('/ResetPassword');
                   },
                 ),
                 VerticalSeparator(),

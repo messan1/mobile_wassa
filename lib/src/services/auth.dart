@@ -1,3 +1,4 @@
+import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ import 'package:ucolis/src/DataHandler/loadingData.dart';
 import 'dart:async';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
 import 'package:ucolis/src/views/screens/dashboard/dashboard.dart';
+import 'package:ucolis/src/views/screens/mapFromDeliver/mapFromDeliver.dart';
 
 import 'db.dart';
 
@@ -25,6 +27,41 @@ class AuthService {
   // Firebase user a realtime stream
   Stream<User> get user => _auth.authStateChanges();
 
+  // Determine if Apple Signin is available on device
+  Future<bool> get appleSignInAvailable => AppleSignIn.isAvailable();
+
+  /// Sign in with Apple
+  Future<User> appleSignIn() async {
+    try {
+      final AuthorizationResult appleResult =
+          await AppleSignIn.performRequests([
+        AppleIdRequest(requestedScopes: [Scope.email, Scope.fullName])
+      ]);
+
+      if (appleResult.error != null) {
+        // handle errors from Apple
+      }
+
+      final AuthCredential credential = OAuthProvider('apple.com').credential(
+        accessToken:
+            String.fromCharCodes(appleResult.credential.authorizationCode),
+        idToken: String.fromCharCodes(appleResult.credential.identityToken),
+      );
+
+      UserCredential firebaseResult =
+          await _auth.signInWithCredential(credential);
+      User user = firebaseResult.user;
+
+      // Update user data
+      updateUserData(user);
+
+      return user;
+    } catch (error) {
+      print(error);
+      return null;
+    }
+  }
+
 //Email auth lOGIN
   Future<User> emailAuthLogin(context, String email, password) async {
     Provider.of<LoadingData>(context, listen: false)
@@ -36,7 +73,33 @@ class AuthService {
       Provider.of<LoadingData>(context, listen: false)
           .updateloadingState(ButtonState.success);
 
-          Get.offAll(Dashboard());
+      FirebaseFirestore.instance
+          .collection('users_data')
+          .doc(userCredential.user.uid)
+          .get()
+          .then((DocumentSnapshot documentSnapshot) {
+        if (documentSnapshot.exists) {
+          if (documentSnapshot.get("active") == false) {
+            final snackBar = SnackBar(
+                content: Text('Votre Compte est En cours de Validation'));
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          } else {
+            if (documentSnapshot.get("accountType") == "Coursier") {
+              final snackBar = SnackBar(
+                  content: Text('Bienvenue sur votre compte Coursier'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              Get.offAll(MapFromDeliver());
+            } else {
+              final snackBar =
+                  SnackBar(content: Text('Bienvenue sur votre compte Client'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              Get.offAll(Dashboard());
+            }
+          }
+        } else {
+          print(documentSnapshot.data());
+        }
+      });
     } on FirebaseAuthException catch (e) {
       Provider.of<LoadingData>(context, listen: false)
           .updateloadingState(ButtonState.fail);
@@ -50,8 +113,36 @@ class AuthService {
       }
     }
   }
+  //  _auth.phoneauth(context),
+  //  Get.offAll(MapFromDeliver());
 
-  //Email auth
+  //Get.toNamed('/dashboard');
+  //Reset Email auth
+  Future<User> resetPassword(context, email) async {
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.loading);
+
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      final snackBar = SnackBar(
+          content: Text("Un email de confirmation à été envoyé sur $email"));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Provider.of<LoadingData>(context, listen: false)
+          .updateloadingState(ButtonState.idle);
+      ;
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        final snackBar = SnackBar(
+            content: Text(
+                "Il n'y a pas de fiche utilisateur correspondant à cet identifiant. L'utilisateur a peut-être été supprimé."));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        Provider.of<LoadingData>(context, listen: false)
+            .updateloadingState(ButtonState.fail);
+      }
+    }
+  }
+
+  ////Email auth
   Future<User> emailAuth(context) async {
     Provider.of<LoadingData>(context, listen: false)
         .updateloadingState(ButtonState.loading);
@@ -135,8 +226,11 @@ class AuthService {
       //updateUserData(user);
       final snackBar = SnackBar(content: Text('Votre numero est verifie!'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-
-      Get.toNamed("/AccountAccess");
+      if (Provider.of<UserAuth>(context, listen: false).authsocial == true) {
+        Get.toNamed("/Information");
+      } else {
+        Get.toNamed("/AccountAccess");
+      }
 
       return user;
     } catch (error) {
@@ -146,7 +240,7 @@ class AuthService {
   }
 
   /// Sign in with Google
-  Future<User> googleSignIn() async {
+  Future<User> googleSignIn(context) async {
     try {
       GoogleSignInAccount googleSignInAccount = await _googleSignIn.signIn();
       GoogleSignInAuthentication googleAuth =
@@ -161,7 +255,7 @@ class AuthService {
       User user = result.user;
 
       // Update user data
-      updateUserData(user);
+      updateUserDataSocailAuth(user, context);
 
       return user;
     } catch (error) {
@@ -172,27 +266,15 @@ class AuthService {
 
 //Siginn with facebook
   Future<User> facebookSignIn() async {
-    try {
-      // Trigger the sign-in flow
-      final AccessToken result =
-          (await FacebookAuth.instance.login()) as AccessToken;
+    final AccessToken result =
+        (await FacebookAuth.instance.login()) as AccessToken;
 
-      // Create a credential from the access token
-      final facebookAuthCredential =
-          FacebookAuthProvider.credential(result.token);
+    // Create a credential from the access token
+    final facebookAuthCredential =
+        FacebookAuthProvider.credential(result.token);
 
-      //UserCredential result = await FirebaseAuth.instance
-      //   .signInWithCredential(facebookAuthCredential);
-      // User user = result.user;
-
-      // Update user data
-      //updateUserData(user);
-
-      return null;
-    } catch (error) {
-      print(error);
-      return null;
-    }
+    // Once signed in, return the UserCredential
+    await _auth.signInWithCredential(facebookAuthCredential);
   }
 
   /// Anonymous Firebase login
@@ -208,6 +290,39 @@ class AuthService {
 
     return reportRef.set({'uid': user.uid, 'lastActivity': DateTime.now()},
         SetOptions(merge: true));
+  }
+
+  Future<void> updateUserDataSocailAuth(User user, context) {
+    Provider.of<UserAuth>(context, listen: false).updateUserUudi(user.uid);
+    DocumentReference reportRef = _db.collection('users_data').doc(user.uid);
+
+    FirebaseFirestore.instance
+        .collection('users_data')
+        .doc(user.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        final snackBar = SnackBar(content: Text('Login success'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        reportRef.set({
+          'profile': user.photoURL,
+          'firstname': user.displayName,
+          'lastname': user.displayName,
+          'email': user.email,
+          'uid': user.uid,
+          'lastActivity': DateTime.now()
+        }, SetOptions(merge: true)).onError((error, stackTrace) {
+          final snackBar = SnackBar(content: Text('Vérifiez vos informations'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }).whenComplete(() {
+          Provider.of<UserAuth>(context, listen: false)
+              .updateUsername(user.displayName, user.displayName, "");
+          Provider.of<UserAuth>(context, listen: false).updateAuthSocial(true);
+          Get.toNamed("/SignUp");
+        });
+      }
+    });
   }
 
   // Sign out

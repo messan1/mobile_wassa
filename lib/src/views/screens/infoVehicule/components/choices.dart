@@ -356,3 +356,15 @@ List<Map<String, dynamic>> transports = [
     'image': 'cars.svg',
   },
 ];
+
+List<Map<String, dynamic>> yesorno = [
+  {
+    'title': 'Oui',
+    'image': 'yes.svg',
+  },
+  {
+    'title': 'Non',
+    'image': 'no.svg',
+  },
+
+];

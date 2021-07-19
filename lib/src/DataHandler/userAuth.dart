@@ -5,26 +5,68 @@ import 'package:ucolis/src/Model/AuthState.dart';
 
 class UserAuth extends ChangeNotifier {
   String phoneNumber = "";
-  String firstname;
-  String lastname;
+  String firstname = "";
+  String lastname = "";
   String number = "";
-  String verificationcode;
-  String verificationId;
-  String bith;
-  String useruuid;
-  String email;
-  String password;
-  String role;
+  String verificationcode = "";
+  String verificationId = "";
+  String bith = "";
+  String useruuid = "";
+  String email = "";
+  String password = "";
+  String role = "";
   AuthState authState;
   File profilePicture;
 
+  //authwithSocial
+  bool authsocial = false;
+
   //info véhicule
   String typeVehicule = "Berline";
+  String climatisation = "Oui";
+  String portiere = "Oui";
+  String vitre = "Oui";
+  String candy = "Oui";
+  String usb = "Oui";
+  String space = "Oui";
+
+  void updateVehiculeUsb(String data) {
+    usb = data;
+    notifyListeners();
+  }
+    void updateAuthSocial(bool data) {
+    authsocial = data;
+    notifyListeners();
+  }
+
+  void updateVehiculeSpace(String data) {
+    space = data;
+    notifyListeners();
+  }
+
+  void updateVehiculeCandy(String data) {
+    candy = data;
+    notifyListeners();
+  }
+
+  void updateVehiculeClimatisation(String data) {
+    climatisation = data;
+    notifyListeners();
+  }
+
+  void updateVehiculeVitre(String data) {
+    vitre = data;
+    notifyListeners();
+  }
+
+  void updateVehiculePortiere(String data) {
+    portiere = data;
+    notifyListeners();
+  }
 
   void updateVehicule(String car) {
     typeVehicule = car;
     notifyListeners();
-
   }
 
   void updateUserUudi(String date) {
