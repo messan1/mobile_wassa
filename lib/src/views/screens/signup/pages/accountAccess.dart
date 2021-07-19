@@ -146,7 +146,7 @@ class _AccountAccessState extends State<AccountAccess> {
                     Provider.of<VoiceData>(context, listen: false).langue],
                 Langue.type2[
                     Provider.of<VoiceData>(context, listen: false).langue],
-                    "Taxi"
+                
               ],
               title: Langue
                   .type[Provider.of<VoiceData>(context, listen: false).langue],

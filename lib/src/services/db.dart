@@ -71,7 +71,7 @@ class DbService {
       'email': Provider.of<UserAuth>(context, listen: false).email,
       'phone': Provider.of<UserAuth>(context, listen: false).phoneNumber,
       'active': false,
-      'accountType': Provider.of<UserAuth>(context, listen: false).role,
+      'AccountType': Provider.of<UserAuth>(context, listen: false).role,
     }, SetOptions(merge: true));
   }
 
