@@ -108,6 +108,7 @@ class DbService {
       'firstname': Provider.of<UserAuth>(context, listen: false).firstname,
       'lastname': Provider.of<UserAuth>(context, listen: false).lastname,
       'birthday': Provider.of<UserAuth>(context, listen: false).bith,
+      'AccountType': Provider.of<UserAuth>(context, listen: false).role,
       'lastActivity': DateTime.now(),
     }, SetOptions(merge: true));
     if (Provider.of<UserAuth>(context, listen: false).role == "Client") {
@@ -116,7 +117,8 @@ class DbService {
               'Félicitation pour votre inscription vous pouvez vous connecter'));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
       Get.toNamed('/Login');
-    } else if (Provider.of<UserAuth>(context, listen: false).role == "Taxi") {
+    }
+    if (Provider.of<UserAuth>(context, listen: false).role == "Coursier") {
       Get.toNamed('/InfoVehicule');
     } else {
       Get.toNamed('/AddDocument');

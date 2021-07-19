@@ -97,7 +97,8 @@ class AuthService {
             }
           }
         } else {
-          print(documentSnapshot.data());
+                 final snackBar = SnackBar(
+                  content: Text('vérifiez vos informations de connexion'));
         }
       });
     } on FirebaseAuthException catch (e) {
@@ -302,8 +303,34 @@ class AuthService {
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (documentSnapshot.exists) {
-        final snackBar = SnackBar(content: Text('Login success'));
-        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        FirebaseFirestore.instance
+            .collection('users_data')
+            .doc(user.uid)
+            .get()
+            .then((DocumentSnapshot documentSnapshot) {
+          if (documentSnapshot.exists) {
+            if (documentSnapshot.get("active") == false) {
+              final snackBar = SnackBar(
+                  content: Text('Votre Compte est En cours de Validation'));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            } else {
+              if (documentSnapshot.get("accountType") == "Coursier") {
+                final snackBar = SnackBar(
+                    content: Text('Bienvenue sur votre compte Coursier'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                Get.offAll(MapFromDeliver());
+              } else {
+                final snackBar = SnackBar(
+                    content: Text('Bienvenue sur votre compte Client'));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                Get.offAll(Dashboard());
+              }
+            }
+          } else {
+            final snackBar = SnackBar(
+                content: Text('vérifiez vos informations de connexion'));
+          }
+        });
       } else {
         reportRef.set({
           'profile': user.photoURL,

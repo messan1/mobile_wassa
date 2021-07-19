@@ -34,6 +34,10 @@ class UserAuth extends ChangeNotifier {
     usb = data;
     notifyListeners();
   }
+    void updateRole(String data) {
+    role = data;
+    notifyListeners();
+  }
     void updateAuthSocial(bool data) {
     authsocial = data;
     notifyListeners();

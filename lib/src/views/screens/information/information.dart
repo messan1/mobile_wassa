@@ -233,18 +233,19 @@ class _InformationState extends State<Information> {
                       Langue.type2[
                           Provider.of<VoiceData>(context, listen: false)
                               .langue],
-                      "Taxi"
                     ],
                     title: Langue.type[
                         Provider.of<VoiceData>(context, listen: false).langue],
                     value: accountType,
                     onChanged: (value) {
-                    
+                      Provider.of<UserAuth>(context, listen: false)
+                          .updateRole(value);
+
+
                       setState(() {
                         if (value == "Coursier" || value == "Coursier")
                           accountType = "Coursier";
                         if (value == "Client") accountType = "Client";
-                        if (value == "Taxi") accountType = "Taxi";
                       });
                     },
                   )
@@ -257,6 +258,8 @@ class _InformationState extends State<Information> {
                   title: Langue.save[
                       Provider.of<VoiceData>(context, listen: false).langue],
                   onTap: () {
+                      //print(Provider.of<UserAuth>(context, listen: false).role);
+
                     // _showLoading();
                     _Save();
                   },

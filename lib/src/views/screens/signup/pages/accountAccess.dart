@@ -157,7 +157,7 @@ class _AccountAccessState extends State<AccountAccess> {
                   if (value == "Coursier" || value == "Coursier")
                     accountType = "Coursier";
                   if (value == "Client") accountType = "Client";
-                  if (value == "Taxi") accountType = "Taxi";
+                  
                 });
               },
             ),
