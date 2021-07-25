@@ -4,6 +4,7 @@ import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:ucolis/src/services/auth.dart';
 import 'package:ucolis/src/views/components/simpleButtonLoading.dart';
 import 'package:smart_select/smart_select.dart';
 import 'package:websafe_svg/websafe_svg.dart';
@@ -16,7 +17,7 @@ import 'package:ucolis/src/DataHandler/voiceData.dart';
 import 'package:ucolis/src/app/scaffoldPlatform.dart';
 import 'package:ucolis/src/blocs/userBloc.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
-import 'package:ucolis/src/services/db.dart';
+
 import 'package:ucolis/src/views/screens/Auth/components/platformTextFieldForm.dart';
 import 'package:ucolis/src/views/screens/Auth/components/verticalSeparator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -34,7 +35,7 @@ class _InfoVehiculeState extends State<InfoVehicule> {
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
   File image;
-  DbService _db = new DbService();
+  AuthService _db = new AuthService();
 
   Future _selectDate(BuildContext context) async {
     DatePicker.showDatePicker(context, showTitleActions: true,

@@ -1,9 +1,11 @@
 import 'dart:io';
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:extended_image/extended_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:ucolis/src/app/Endpoint.dart';
+import 'package:ucolis/src/services/auth.dart';
+import 'package:ucolis/src/services/dbservice.dart';
 import 'package:ucolis/src/views/components/simpleButtonLoading.dart';
 
 import 'package:provider/provider.dart';
@@ -12,16 +14,17 @@ import 'package:ucolis/src/DataHandler/voiceData.dart';
 import 'package:ucolis/src/app/scaffoldPlatform.dart';
 import 'package:ucolis/src/blocs/userBloc.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
-import 'package:ucolis/src/services/db.dart';
-import 'package:ucolis/src/utils/Assistance/AuthAssistanceMethods.dart';
+
 import 'package:ucolis/src/views/screens/Auth/components/dropDownButton.dart';
 import 'package:ucolis/src/views/screens/Auth/components/imageLoader.dart';
+import 'package:ucolis/src/views/screens/Auth/components/imageLoaderFromNetwork.dart';
 import 'package:ucolis/src/views/screens/Auth/components/platformTextFieldForm.dart';
 import 'package:ucolis/src/views/screens/Auth/components/verticalSeparator.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:ucolis/src/views/screens/settings/globalFunction.dart';
 import 'package:ucolis/src/views/screens/settings/sizeCalculator.dart';
 import 'package:ucolis/src/views/styles/styles.dart';
+import 'package:logger/logger.dart';
 
 class Information extends StatefulWidget {
   @override
@@ -31,11 +34,15 @@ class Information extends StatefulWidget {
 class _InformationState extends State<Information> {
   TextEditingController _dateController = TextEditingController();
   String accountType = "Client";
+  AuthService _auth = new AuthService();
+  var logger = Logger();
+
 
   TextEditingController _firstnameController = new TextEditingController();
   TextEditingController _lastnameController = new TextEditingController();
   File image;
-  DbService _db = new DbService();
+  AuthService _db = new AuthService();
+  UserDBservice db = UserDBservice();
 
   Future _selectDate(BuildContext context) async {
     DatePicker.showDatePicker(context, showTitleActions: true,
@@ -46,6 +53,9 @@ class _InformationState extends State<Information> {
 
   @override
   void dispose() {
+
+    logger.d("Dispose",_auth.getUser);
+
     _dateController?.dispose();
     final _userBloc = UserBloc();
     _userBloc.dispose();
@@ -83,9 +93,14 @@ class _InformationState extends State<Information> {
       EasyLoading.instance.animationStyle = EasyLoadingAnimationStyle.opacity;
       EasyLoading.instance.indicatorType = EasyLoadingIndicatorType.pulse;
     }
+    print(_auth.getUser);
+
 
     @override
     void initState() {
+   
+
+
       final _userBloc = Provider.of<UserBloc>(context, listen: false);
       _userBloc.firstName.listen((event) {
         firstname = event;
@@ -102,29 +117,31 @@ class _InformationState extends State<Information> {
           Provider.of<UserAuth>(context, listen: false).lastname;
       _firstnameController.text =
           Provider.of<UserAuth>(context, listen: false).lastname;
+
       super.initState();
     }
 
     _Save() async {
-      if (_firstnameController.text.isNotEmpty &&
-          _lastnameController.text.isNotEmpty &&
-          _dateController.text.isNotEmpty &&
-          image != null) {
-        Provider.of<UserAuth>(context, listen: false).updateUsername(
-            _lastnameController.text,
-            _firstnameController.text,
-            _dateController.text);
-        _db.uploadFile(context, image);
+        if (_firstnameController.text.isNotEmpty &&
+            _lastnameController.text.isNotEmpty &&
+            _dateController.text.isNotEmpty &&
+            image != null) {
+          Provider.of<UserAuth>(context, listen: false).updateUsername(
+              _lastnameController.text,
+              _firstnameController.text,
+              _dateController.text);
+          _db.uploadFile(context, image);
 
-        //var response = await AuthAssistanceMethods.signupUser(context);
+          //var response = await AuthAssistanceMethods.signupUser(context);
 
-      } else {
-        _disableLoading();
+        } else {
+          _disableLoading();
 
-        _showError(Langue
-            .verif6[Provider.of<VoiceData>(context, listen: false).langue]);
-      }
+          _showError(Langue
+              .verif6[Provider.of<VoiceData>(context, listen: false).langue]);
+        }
     }
+    logger.d("before return",_auth.getUser);
 
     return ScaffoldPlatform(
       appBarTitle:
@@ -135,13 +152,13 @@ class _InformationState extends State<Information> {
           padding: EdgeInsets.symmetric(
               horizontal: SizeCalculator.width(context, width: .085)),
           children: [
-            Text(
-              Langue.etape[
-                      Provider.of<VoiceData>(context, listen: false).langue] +
-                  " 4/4",
-              textAlign: TextAlign.center,
-              style: headerStyle,
-            ),
+           Text(
+                    Langue.etape[Provider.of<VoiceData>(context, listen: false)
+                            .langue] +
+                        " 4/4",
+                    textAlign: TextAlign.center,
+                    style: headerStyle,
+                  ),
             SizedBox(
               height: _size.height * .3,
               child: Padding(
@@ -198,29 +215,30 @@ class _InformationState extends State<Information> {
                         SizeCalculator.height(context, height: .0175),
                     controller: _lastnameController),
                 VerticalSeparator(),
-                GestureDetector(
-                  child: PlatformTextFieldForm.textFieldPlatform(
-                      controller: _dateController,
-                      enabled: false,
-                      title: Langue.ddn[
-                          Provider.of<VoiceData>(context, listen: false)
-                              .langue],
-                      verticalContentPadding: 20,
-                      suffix: IconButton(
-                        icon: Icon(
-                          Platform.isIOS
-                              ? CupertinoIcons.calendar
-                              : Icons.calendar_today_rounded,
-                          color: blackFont,
-                        ),
-                        onPressed: () async {
+               GestureDetector(
+                        child: PlatformTextFieldForm.textFieldPlatform(
+                            controller: _dateController,
+                            enabled: false,
+                            title: Langue.ddn[
+                                Provider.of<VoiceData>(context, listen: false)
+                                    .langue],
+                            verticalContentPadding: 20,
+                            suffix: IconButton(
+                              icon: Icon(
+                                Platform.isIOS
+                                    ? CupertinoIcons.calendar
+                                    : Icons.calendar_today_rounded,
+                                color: blackFont,
+                              ),
+                              onPressed: () async {
+                                await _selectDate(context);
+                              },
+                            )),
+                        onTap: () async {
                           await _selectDate(context);
                         },
-                      )),
-                  onTap: () async {
-                    await _selectDate(context);
-                  },
-                )
+                      )
+                    
               ],
             ),
             VerticalSeparator(),

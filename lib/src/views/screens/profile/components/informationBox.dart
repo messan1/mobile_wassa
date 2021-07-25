@@ -1,17 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:ucolis/src/constants/constString.dart';
-import 'package:ucolis/src/services/auth.dart';
 import 'package:ucolis/src/views/components/extendedContainer.dart';
-import 'package:ucolis/src/views/screens/profile/components/changeLangageDialog.dart';
 import 'package:ucolis/src/views/styles/styles.dart';
 import 'package:sizer/sizer.dart';
 
 class InformationBox extends StatelessWidget {
+  const InformationBox(
+      {Key key,
+      @required this.phone,
+      @required this.email,
+    
+      @required this.fullname})
+      : super(key: key);
+
+  final String phone;
+  final String email;
+
+  final String fullname;
+
   @override
   Widget build(BuildContext context) {
-    AuthService auth = AuthService();
-
     return ExtendedContainer(
       color: Colors.white,
       padding: EdgeInsets.symmetric(horizontal: 1.25.h, vertical: 2.0.h),
@@ -20,16 +29,17 @@ class InformationBox extends StatelessWidget {
       child: Column(
         children: [
           SizedBox(height: 1.75.h),
-          profileInfoBox(title: "+225 49 96 23 00"),
-          profileInfoBox(title: auth.getUser.email ?? "null@null.com"),
-          profileInfoBox(title: "Franck", icon: Icons.person_outline_rounded),
-          profileInfoBox(title: "Date de naissance", icon: Icons.cake_outlined),
+          profileInfoBox(title: phone),
+          profileInfoBox(title: email),
+          profileInfoBox(title: fullname, icon: Icons.person_outline_rounded),
+
           profileInfoBox(
               title: ConstString.changeLanguage,
               icon: Icons.flag_outlined,
               trailing: Icon(Icons.arrow_drop_down_sharp),
               onPresse: () {
-                Get.dialog(ChangeLangageDialog());
+                //Get.dialog(ChangeLangageDialog());
+                Get.toNamed("/Language");
               }),
         ],
       ),

@@ -1,37 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:ucolis/src/app/scaffoldPlatform.dart';
+
 import 'package:ucolis/src/services/auth.dart';
+import 'package:ucolis/src/views/screens/dashboard/dashboard.dart';
+import 'package:ucolis/src/views/screens/login/login.dart';
 
-class Home extends StatefulWidget {
-  @override
-  _HomeState createState() => _HomeState();
-}
-
-class _HomeState extends State<Home> {
-  AuthService auth = AuthService();
-
-  @override
-  void initState() {
-    print(auth.getUser);
-    if (auth.getUser != null) {
-      showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return Container();
-          });
-      auth.authPersistchecker(auth.getUser.uid,context);
-    }
-    super.initState();
-  }
+class Home extends StatelessWidget {
+  const Home({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldPlatform(
-      activeBackButton: false,
-      appBarTitle: "",
-      child: Container(),
-    );
+    final AuthService auth = new AuthService();
+    return Container();
   }
 }
-
-//  buildVoiceDialog(context);

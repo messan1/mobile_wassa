@@ -3,13 +3,16 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/route_manager.dart';
+import 'package:progress_state_button/progress_button.dart';
 import 'package:provider/provider.dart';
+import 'package:ucolis/src/DataHandler/loadingData.dart';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
 import 'package:ucolis/src/app/scaffoldPlatform.dart';
 import 'package:ucolis/src/constants/constAudio.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
 import 'package:ucolis/src/constants/constString.dart';
+import 'package:ucolis/src/services/auth.dart';
 import 'package:ucolis/src/views/components/menuButton.dart';
 import 'package:ucolis/src/views/components/voiceCommand.dart';
 import 'package:ucolis/src/views/screens/dashboard/components/dashOptionTab.dart';
@@ -27,6 +30,8 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+    AuthService auth = AuthService();
+
   final storage = new FlutterSecureStorage();
   static get _motor => "motor";
   static get _cars => "cars";
@@ -36,6 +41,9 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   void initState() {
+    print(auth.getUser);
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.idle);
     _getThingsOnStartup().then((value) {
       if (Provider.of<VoiceData>(context, listen: false).activercommandeVocal) {
         showDialog(
@@ -65,7 +73,6 @@ class _DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-   
     return ScaffoldPlatform(
         drawer: UcolisDrawer(),
         scaffoldState: _drawerKey,

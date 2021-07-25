@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
 import 'package:ucolis/src/app/appRoutes.dart';
+import 'package:ucolis/src/views/screens/home/home.dart';
 
 class PlatformApp extends StatelessWidget {
   @override
@@ -19,7 +20,8 @@ class PlatformApp extends StatelessWidget {
           ],
           builder: EasyLoading.init(),
           getPages: AppRoutes.routes,
-          initialRoute: '/',
+          //home: Home(),
+          initialRoute: '/Login',
           defaultTransition: Transition.cupertino,
         );
       });

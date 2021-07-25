@@ -11,7 +11,8 @@ import 'package:ucolis/src/app/scaffoldPlatform.dart';
 import 'package:ucolis/src/blocs/userBloc.dart';
 import 'package:ucolis/src/constants/constAudio.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
-import 'package:ucolis/src/services/db.dart';
+import 'package:ucolis/src/services/auth.dart';
+
 import 'package:ucolis/src/views/components/simpleButtonLoading.dart';
 import 'package:ucolis/src/views/components/voiceCommand.dart';
 import 'package:ucolis/src/views/screens/Auth/components/simpleButton.dart';
@@ -29,7 +30,7 @@ class AddDocument extends StatefulWidget {
 }
 
 class _AddDocumentState extends State<AddDocument> {
-  DbService _internaldb = new DbService();
+  AuthService _internaldb = new AuthService();
   final AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
   @override
   void initState() {

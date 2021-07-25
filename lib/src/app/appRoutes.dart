@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:ucolis/src/views/screens/OnboardingScreen/OnboardingScreen.dart';
 import 'package:ucolis/src/views/screens/Search/SearchScreen.dart';
+import 'package:ucolis/src/views/screens/accountType/accountType.dart';
 import 'package:ucolis/src/views/screens/choixDaddress/choixAdress.dart';
 import 'package:ucolis/src/views/screens/choixDaddress/destination.dart';
 import 'package:ucolis/src/views/screens/dashboard/dashboard.dart';
@@ -12,6 +13,7 @@ import 'package:ucolis/src/views/screens/home/home.dart';
 import 'package:ucolis/src/views/screens/infoVehicule/infovehicule.dart';
 import 'package:ucolis/src/views/screens/information/information.dart';
 import 'package:ucolis/src/views/screens/information/pages/addDocument.dart';
+import 'package:ucolis/src/views/screens/information/updateInfo.dart';
 import 'package:ucolis/src/views/screens/language/language.dart';
 import 'package:ucolis/src/views/screens/login/login.dart';
 import 'package:ucolis/src/views/screens/login/pages/resetPassword.dart';
@@ -34,8 +36,8 @@ import 'package:ucolis/src/views/screens/wallet/wallet.dart';
 
 abstract class AppRoutes {
   static List<GetPage> get routes => [
-        GetPage(name: '/', page: () => Dashboard()),
-        GetPage(name: '/Dashboard', page: () => Home()),
+        GetPage(name: '/home', page: () => Home()),
+        GetPage(name: '/Dashboard', page: () => Dashboard()),
         GetPage(
             name: '/choixAdress',
             page: () => ChoixAdress(),
@@ -84,5 +86,8 @@ abstract class AppRoutes {
         GetPage(name: '/AddDocument', page: () => AddDocument()),
         GetPage(name: '/AccountAccess', page: () => AccountAccess()),
         GetPage(name: '/InfoVehicule', page: () => InfoVehicule()),
+        GetPage(name: '/AccountType', page: () => AccountType()),
+        GetPage(name: '/UpdateUserInfo', page: () => UpdateUserInfo()),
+
       ];
 }

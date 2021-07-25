@@ -5,7 +5,7 @@ import 'package:ucolis/src/DataHandler/appData.dart';
 import 'package:ucolis/src/DataHandler/loadingData.dart';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
-import 'package:ucolis/src/Model/Global.dart';
+import 'package:ucolis/src/Model/User.dart';
 import 'package:ucolis/src/app/platformApp.dart';
 import 'package:sizer/sizer.dart';
 import 'package:ucolis/src/blocs/userBloc.dart';
@@ -37,6 +37,7 @@ class _AppState extends State<App> {
         return MultiProvider(
           child: PlatformApp(),
           providers: [
+             
             ChangeNotifierProvider(
               create: (context) => AppData(),
             ),
@@ -50,6 +51,8 @@ class _AppState extends State<App> {
               create: (context) => VoiceData(),
             ),
             Provider(create: (context) => _userBloc),
+
+          
             StreamProvider<User>.value(
               value: AuthService().user,
               initialData: null,

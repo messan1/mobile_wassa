@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:apple_sign_in/apple_sign_in.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -12,18 +15,20 @@ import 'dart:async';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
+import 'package:ucolis/src/views/screens/Auth/components/buildShowDialog.dart';
 import 'package:ucolis/src/views/screens/OnboardingScreen/OnboardingScreen.dart';
 import 'package:ucolis/src/views/screens/dashboard/dashboard.dart';
 import 'package:ucolis/src/views/screens/login/login.dart';
 import 'package:ucolis/src/views/screens/mapFromDeliver/mapFromDeliver.dart';
-
-import 'db.dart';
+import 'package:extended_image/extended_image.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:path/path.dart';
 
 class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
-  final DbService _internaldb = new DbService();
 
   // Firebase user one-time fetch
   User get getUser => _auth.currentUser;
@@ -66,6 +71,12 @@ class AuthService {
     }
   }
 
+  Future<String> downloadURL(String image) async {
+    return await firebase_storage.FirebaseStorage.instance
+        .ref('UsersProfiles/$image')
+        .getDownloadURL();
+  }
+
 //Email auth lOGIN
   Future<User> emailAuthLogin(context, String email, password) async {
     Provider.of<LoadingData>(context, listen: false)
@@ -100,6 +111,7 @@ class AuthService {
                   content: Text(Langue.auth3[
                       Provider.of<VoiceData>(context, listen: false).langue]));
               ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
               Get.offAll(Dashboard());
             }
           }
@@ -172,10 +184,9 @@ class AuthService {
       Provider.of<LoadingData>(context, listen: false)
           .updateloadingState(ButtonState.idle);
       Provider.of<UserAuth>(context, listen: false).updateUserUudi(user.uid);
-      _internaldb.updateUserEmailData(context);
+      updateUserEmailData(context);
 
       updateUserData(user);
-      Get.toNamed('/Information');
 
       return user;
     } on FirebaseAuthException catch (e) {
@@ -209,7 +220,6 @@ class AuthService {
       phoneNumber: Provider.of<UserAuth>(context, listen: false).phoneNumber,
       verificationCompleted: (PhoneAuthCredential credential) async {},
       verificationFailed: (FirebaseAuthException e) async {
-        print(e);
         Provider.of<LoadingData>(context, listen: false)
             .updateloadingState(ButtonState.fail);
         final snackBar = SnackBar(
@@ -245,11 +255,13 @@ class AuthService {
           content: Text(Langue
               .auth11[Provider.of<VoiceData>(context, listen: false).langue]));
       ScaffoldMessenger.of(context).showSnackBar(snackBar);
-      if (Provider.of<UserAuth>(context, listen: false).authsocial == true) {
-        Get.toNamed("/Information");
-      } else {
-        Get.toNamed("/AccountAccess");
-      }
+      getUser.linkWithPhoneNumber(user.phoneNumber).whenComplete(() {
+        if (Provider.of<UserAuth>(context, listen: false).authsocial == true) {
+          Get.toNamed("/Information");
+        } else {
+          Get.toNamed("/AccountAccess");
+        }
+      });
 
       return user;
     } catch (error) {
@@ -303,14 +315,6 @@ class AuthService {
     return user;
   }
 
-  /// Updates the User's data in Firestore on each new login
-  Future<void> updateUserData(User user) {
-    DocumentReference reportRef = _db.collection('users_data').doc(user.uid);
-
-    return reportRef.set({'uid': user.uid, 'lastActivity': DateTime.now()},
-        SetOptions(merge: true));
-  }
-
   Future<void> updateUserDataSocailAuth(User user, context) {
     Provider.of<UserAuth>(context, listen: false).updateUserUudi(user.uid);
     DocumentReference reportRef = _db.collection('users_data').doc(user.uid);
@@ -361,6 +365,7 @@ class AuthService {
           'firstname': user.displayName,
           'lastname': user.displayName,
           'email': user.email,
+          'isDeleted': false,
           'uid': user.uid,
           'lastActivity': DateTime.now()
         }, SetOptions(merge: true)).onError((error, stackTrace) {
@@ -394,26 +399,9 @@ class AuthService {
           .get()
           .then((DocumentSnapshot documentSnapshot) {
         if (documentSnapshot.exists) {
-          print(documentSnapshot);
           if (documentSnapshot.get("active") == false) {
           } else {
             if (documentSnapshot.get("AccountType") == "Coursier") {
-              Provider.of<UserAuth>(context, listen: false).updateUsername(
-                  documentSnapshot.get("firstname"),
-                  documentSnapshot.get("lastname"),
-                  documentSnapshot.get("bithday"));
-              Provider.of<UserAuth>(context, listen: false)
-                  .updatePhone(documentSnapshot.get("phone"));
-
-              Provider.of<UserAuth>(context, listen: false)
-                  .updateRole(documentSnapshot.get("AccountType"));
-
-              Provider.of<UserAuth>(context, listen: false)
-                  .updateProfileImage(documentSnapshot.get("profile"));
-
-              Provider.of<UserAuth>(context, listen: false)
-                  .updateUserUudi(documentSnapshot.get("uid"));
-
               Get.offAll(MapFromDeliver());
             } else {
               Get.offAll(Dashboard());
@@ -427,5 +415,332 @@ class AuthService {
       if (e.code == 'user-not-found') {
       } else if (e.code == 'wrong-password') {}
     }
+  }
+
+  /// Updates the User's data in Firestore on each new login
+  Future<void> updateUserData(User user) {
+    DocumentReference reportRef = _db.collection('users_data').doc(user.uid);
+
+    return reportRef.set({
+      'uid': user.uid,
+      'lastActivity': DateTime.now(),
+      'isDeleted': false,
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> uploadFile(context, File imageFile) async {
+    String name = basename(imageFile.path);
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.loading);
+    try {
+      await firebase_storage.FirebaseStorage.instance
+          .ref('UsersProfiles/$name')
+          .putFile(imageFile)
+          // ignore: missing_return
+          .onError((error, stackTrace) {
+        Provider.of<LoadingData>(context, listen: false)
+            .updateloadingState(ButtonState.fail);
+        final snackBar = SnackBar(content: Text('Vérifiez vos informations'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }).whenComplete(() => {
+                updateUserInfoDataInfo(context, name, false),
+                Provider.of<LoadingData>(context, listen: false)
+                    .updateloadingState(ButtonState.idle)
+              });
+    } catch (e) {
+      // e.g, e.code == 'canceled'
+    }
+  }
+
+  Future<void> updateuserInfo(context, File imageFile) async {
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.loading);
+
+    if (imageFile != null) {
+      print(imageFile);
+      String name = basename(imageFile.path);
+      try {
+        await firebase_storage.FirebaseStorage.instance
+            .ref('UsersProfiles/$name')
+            .putFile(imageFile)
+            // ignore: missing_return
+            .onError((error, stackTrace) {
+          Provider.of<LoadingData>(context, listen: false)
+              .updateloadingState(ButtonState.fail);
+          final snackBar = SnackBar(content: Text('Vérifiez vos informations'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+        }).whenComplete(() => {
+                  updateUserInfoDataInfo(context, name, true),
+                  Provider.of<LoadingData>(context, listen: false)
+                      .updateloadingState(ButtonState.idle)
+                });
+      } catch (e) {
+        // e.g, e.code == 'canceled'
+      }
+    } else {
+      Provider.of<LoadingData>(context, listen: false)
+          .updateloadingState(ButtonState.idle);
+      updateUserInfoDataInfoWithoutImage(context);
+    }
+  }
+
+  Future<void> updateUserEmailData(context) {
+    String userUuuid = Provider.of<UserAuth>(context, listen: false).useruuid;
+
+    DocumentReference reportRef = _db.collection('users_data').doc(userUuuid);
+    getUser.updateDisplayName(" ");
+
+    return reportRef.set({
+      'uid': userUuuid,
+      'lastActivity': DateTime.now(),
+      'firstname': '',
+      'lastname': '',
+      'birthday': '',
+      'email': Provider.of<UserAuth>(context, listen: false).email,
+      'phone': Provider.of<UserAuth>(context, listen: false).phoneNumber,
+      'active': false,
+      'AccountType': Provider.of<UserAuth>(context, listen: false).role,
+    }, SetOptions(merge: true)).whenComplete(() {
+      Get.toNamed('/Information');
+    });
+  }
+
+  Future<void> updateUserInfoData(context, String profile) {
+    String userUuuid = Provider.of<UserAuth>(context, listen: false).useruuid;
+    DocumentReference reportRef = _db.collection('users_data').doc(userUuuid);
+
+    reportRef.set({
+      'uid': userUuuid,
+      'profile': profile,
+      'isDeleted': false,
+      'firstname': Provider.of<UserAuth>(context, listen: false).firstname,
+      'lastname': Provider.of<UserAuth>(context, listen: false).lastname,
+      'birthday': Provider.of<UserAuth>(context, listen: false).bith,
+      'lastActivity': DateTime.now(),
+    }, SetOptions(merge: true));
+    if (Provider.of<UserAuth>(context, listen: false).role == "Client") {
+      final snackBar = SnackBar(
+          content: Text(
+              'Félicitation pour votre inscription vous pouvez vous connecter'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Get.toNamed('/Login');
+    } else {
+      // Get.toNamed('/AddDocument');
+    }
+  }
+
+  void updateUserInfoDataInfo(context, String profile, bool update) {
+    getUser.updateDisplayName(
+        Provider.of<UserAuth>(context, listen: false).firstname +
+            " " +
+            Provider.of<UserAuth>(context, listen: false).lastname);
+
+    getUser.updatePhotoURL(profile);
+
+    DocumentReference reportRef = _db.collection('users_data').doc(getUser.uid);
+    if (update == true && profile == null) {
+      reportRef.set({
+        'uid': getUser.uid,
+        'profile': profile,
+        'isDeleted': false,
+        'firstname': Provider.of<UserAuth>(context, listen: false).firstname,
+        'lastname': Provider.of<UserAuth>(context, listen: false).lastname,
+        'birthday': Provider.of<UserAuth>(context, listen: false).bith,
+        'lastActivity': DateTime.now(),
+      }, SetOptions(merge: true)).whenComplete(() {
+        Get.back();
+      });
+    } else {
+      reportRef.set({
+        'uid': getUser.uid,
+        'profile': profile,
+        'isDeleted': false,
+        'firstname': Provider.of<UserAuth>(context, listen: false).firstname,
+        'lastname': Provider.of<UserAuth>(context, listen: false).lastname,
+        'birthday': Provider.of<UserAuth>(context, listen: false).bith,
+        'AccountType': Provider.of<UserAuth>(context, listen: false).role,
+        'lastActivity': DateTime.now(),
+      }, SetOptions(merge: true)).whenComplete(() {
+        if (Provider.of<UserAuth>(context, listen: false).role == "Client") {
+          final snackBar = SnackBar(
+              content: Text(
+                  'Félicitation pour votre inscription vous pouvez vous connecter'));
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Get.toNamed('/Login');
+        } else if (Provider.of<UserAuth>(context, listen: false).role ==
+            "Coursier") {
+          Get.toNamed('/InfoVehicule');
+        } else {
+          if (update) {
+            Get.toNamed('/Dashboard');
+          } else {
+            Get.toNamed('/AddDocument');
+          }
+        }
+      });
+    }
+  }
+
+  void updateUserInfoDataInfoWithoutImage(context) {
+    String uid = getUser.uid;
+
+    DocumentReference reportRef = _db.collection('users_data').doc(uid);
+    getUser.updateDisplayName(
+        Provider.of<UserAuth>(context, listen: false).firstname +
+            " " +
+            Provider.of<UserAuth>(context, listen: false).lastname);
+    reportRef.set({
+      'uid': uid,
+      'isDeleted': false,
+      'firstname': Provider.of<UserAuth>(context, listen: false).firstname,
+      'lastname': Provider.of<UserAuth>(context, listen: false).lastname,
+      'birthday': Provider.of<UserAuth>(context, listen: false).bith,
+      'lastActivity': DateTime.now(),
+    }, SetOptions(merge: true)).whenComplete(() {
+      final snackBar =
+          SnackBar(content: Text('Vos informations ont été modifié'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      Get.toNamed('/Dashboard');
+    });
+  }
+
+  Future<void> updateUserDocuments(context, List<String> docs) {
+    String userUuuid = Provider.of<UserAuth>(context, listen: false).useruuid;
+    DocumentReference reportRef = _db.collection('users_data').doc(userUuuid);
+
+    reportRef.set({
+      'uid': userUuuid,
+      'documents': docs,
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> uploadFiles(List<File> _images, context) async {
+    if (_images.length == 0) {
+      final snackBar = SnackBar(content: Text('Chargez des documents'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    } else {
+      List<String> fileData = [];
+
+      await Future.wait(_images.map((_image) async {
+        fileData.add(basename(_image.path));
+        uploadDoc(_image, context);
+      }));
+      updateUserDocuments(context, fileData);
+
+      Provider.of<LoadingData>(context, listen: false)
+          .updateloadingState(ButtonState.success);
+
+      buildShowDialog(context);
+    }
+  }
+
+  Future<void> uploadDoc(File imageFile, context) async {
+    String name = basename(imageFile.path);
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.loading);
+    try {
+      await firebase_storage.FirebaseStorage.instance
+          .ref('UserDocuments/$name')
+          .putFile(imageFile)
+          // ignore: missing_return
+          .onError((error, stackTrace) {
+        Provider.of<LoadingData>(context, listen: false)
+            .updateloadingState(ButtonState.fail);
+        final snackBar = SnackBar(content: Text('Vérifiez vos informations'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }).whenComplete(() => {
+                updateUserInfoData(context, name),
+                Provider.of<LoadingData>(context, listen: false)
+                    .updateloadingState(ButtonState.idle)
+              });
+    } catch (e) {
+      // e.g, e.code == 'canceled'
+    }
+  }
+
+  Future<void> updateUserInfoCarData(context) {
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.loading);
+    String userUuuid = Provider.of<UserAuth>(context, listen: false).useruuid;
+    DocumentReference reportRef = _db.collection('users_data').doc(userUuuid);
+    reportRef.set({
+      'uid': userUuuid,
+      'isDeleted': false,
+      "carInfo": {
+        'typeVehicule':
+            Provider.of<UserAuth>(context, listen: false).typeVehicule,
+        'climatisation':
+            Provider.of<UserAuth>(context, listen: false).climatisation,
+        'portiere': Provider.of<UserAuth>(context, listen: false).portiere,
+        'vitre': Provider.of<UserAuth>(context, listen: false).vitre,
+        'candy': Provider.of<UserAuth>(context, listen: false).candy,
+        'usb': Provider.of<UserAuth>(context, listen: false).usb,
+        'space': Provider.of<UserAuth>(context, listen: false).space,
+      },
+      'lastActivity': DateTime.now(),
+    }, SetOptions(merge: true)).onError((error, stackTrace) {
+      final snackBar = SnackBar(content: Text('Une erreur est survenue'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      Provider.of<LoadingData>(context, listen: false)
+          .updateloadingState(ButtonState.fail);
+    }).whenComplete(() => {
+          Provider.of<LoadingData>(context, listen: false)
+              .updateloadingState(ButtonState.idle),
+          Get.toNamed("/AddDocument")
+        });
+  }
+
+  void requestRoleChange(context) {
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.loading);
+    String userUuuid = getUser.uid;
+    DocumentReference reportRef = _db.collection('users_data').doc(userUuuid);
+    reportRef.set({
+      'uid': userUuuid,
+      'RequestAccountType': Provider.of<UserAuth>(context, listen: false).role,
+      'lastActivity': DateTime.now(),
+    }, SetOptions(merge: true)).onError((error, stackTrace) {
+      final snackBar = SnackBar(content: Text('Une erreur est survenue'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+      Provider.of<LoadingData>(context, listen: false)
+          .updateloadingState(ButtonState.fail);
+    }).whenComplete(() {
+      final snackBarsuccess =
+          SnackBar(content: Text('Votre demande est en cours de validation'));
+      ScaffoldMessenger.of(context).showSnackBar(snackBarsuccess);
+
+      Provider.of<LoadingData>(context, listen: false)
+          .updateloadingState(ButtonState.idle);
+      Get.back();
+    });
+  }
+
+  void deleteAccount(context) {
+    Provider.of<LoadingData>(context, listen: false)
+        .updateloadingState(ButtonState.loading);
+    String userUuuid = getUser.uid;
+    DocumentReference reportRef = _db.collection('users_data').doc(userUuuid);
+    getUser.delete().whenComplete(() {
+      reportRef.set({
+        'uid': userUuuid,
+        'isDeleted': true,
+        'lastActivity': DateTime.now(),
+      }, SetOptions(merge: true)).onError((error, stackTrace) {
+        final snackBar = SnackBar(content: Text('Une erreur est survenue'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
+        Provider.of<LoadingData>(context, listen: false)
+            .updateloadingState(ButtonState.fail);
+      }).whenComplete(() {
+        final snackBarsuccess =
+            SnackBar(content: Text('Votre compte à été éffacé'));
+        ScaffoldMessenger.of(context).showSnackBar(snackBarsuccess);
+        Provider.of<LoadingData>(context, listen: false)
+            .updateloadingState(ButtonState.idle);
+        signOut();
+      });
+    });
   }
 }

@@ -1,12 +1,15 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:ucolis/src/DataHandler/userAuth.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
+import 'package:ucolis/src/app/Endpoint.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
 import 'package:ucolis/src/constants/constString.dart';
 import 'package:ucolis/src/services/auth.dart';
+import 'package:ucolis/src/services/dbservice.dart';
 import 'package:ucolis/src/utils/sizeCalculator.dart';
 import 'package:ucolis/src/views/components/extendedContainer.dart';
 import 'package:ucolis/src/views/components/profilePicture.dart';
@@ -21,6 +24,7 @@ class UcolisDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     String imagePath = 'assets/profile.jpg';
     AuthService auth = AuthService();
+    UserDBservice db = UserDBservice();
 
     return Drawer(
       child: Stack(
@@ -33,11 +37,21 @@ class UcolisDrawer extends StatelessWidget {
                 padding: EdgeInsets.only(left: 8.0.w, top: 10.0.h),
                 child: UserAccountsDrawerHeader(
                   decoration: BoxDecoration(color: blackFont),
-                  accountName: Text(
-                    Provider.of<UserAuth>(context, listen: false).firstname.toUpperCase() ?? "",
-                  
-                    style: nameMenuStyle,
-                  ),
+                  accountName: FutureBuilder(
+                      future: db.getUserInformation(),
+                      builder: (context, AsyncSnapshot snap) {
+                        if (snap.hasData) {
+                          return Text(
+                            snap.data["firstname"],
+                            style: nameMenuStyle,
+                          );
+                        }
+                        if (snap.hasError) {
+                          return Text("Something went wrong");
+                        }
+
+                        return Container();
+                      }),
                   accountEmail: Text(
                     auth.getUser.email ?? 'null@null.com',
                     style: mailMenuStyle,
@@ -48,11 +62,22 @@ class UcolisDrawer extends StatelessWidget {
                         onTap: () {
                           Get.toNamed("/profile");
                         },
-                        child: ProfilePicture(
-                          profilePicture: profilrPicture,
-                          imagePath: imagePath,
-                          radius: 60.0.h,
-                        ),
+                        child: FutureBuilder(
+                            future: db.getUserInformation(),
+                            builder: (context, AsyncSnapshot snap) {
+                              if (snap.hasData) {
+                                return ProfilePicture(
+                                    profilePicture: FirebaseStorageImage +
+                                        snap.data["profile"] +
+                                        "?alt=media",
+                                    drawer: true,
+                                    radius: 6.75.h);
+                              }
+                              return ProfilePicture(
+                                  profilePicture: null,
+                                  radius: 60.0.h,
+                                  drawer: true);
+                            }),
                       ),
                     ],
                   ),

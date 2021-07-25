@@ -1,4 +1,5 @@
-class User {
+class UserModel {
+  final String uid;
   final String firstname;
   final String lastname;
   final String number;
@@ -7,8 +8,10 @@ class User {
   final String active;
   final String isDeleted;
 
-  User(
-      {this.firstname,
+  UserModel(
+      {
+        this.uid,
+      this.firstname,
       this.lastname,
       this.email,
       this.bith,
@@ -16,8 +19,9 @@ class User {
       this.active,
       this.isDeleted});
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      uid: json['uid'],
       firstname: json['firstname'],
       lastname: json['firstname'],
       number: json['number'],
@@ -28,8 +32,9 @@ class User {
     );
   }
 
-  factory User.fromMap(Map json) {
-    return User(
+  factory UserModel.fromMap(Map json) {
+    return UserModel(
+      uid: json['uid'] ?? "",
       firstname: json['firstname'] ?? "",
       lastname: json['firstname'] ?? "",
       number: json['number'] ?? "",

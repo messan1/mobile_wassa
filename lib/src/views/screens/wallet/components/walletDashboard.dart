@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sizer/sizer.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
+import 'package:ucolis/src/app/Endpoint.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
 import 'package:ucolis/src/constants/constString.dart';
+import 'package:ucolis/src/services/auth.dart';
+import 'package:ucolis/src/services/dbservice.dart';
 import 'package:ucolis/src/views/components/extendedContainer.dart';
 import 'package:ucolis/src/views/components/profilePicture.dart';
 import 'package:ucolis/src/views/styles/styles.dart';
@@ -15,6 +18,9 @@ class WalletDashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthService auth = new AuthService();
+    UserDBservice db = UserDBservice();
+
     return ExtendedContainer(
       color: Colors.white,
       margin: EdgeInsets.only(bottom: 3.5.h),
@@ -25,24 +31,37 @@ class WalletDashboard extends StatelessWidget {
         children: [
           Row(
             children: [
-              ProfilePicture(
-                profilePicture: null,
-                imagePath: null,
-                radius: 6.0.h,
-                withEditButton: false,
-              ),
+              FutureBuilder(
+                  future: db.getUserInformation(),
+                  builder: (context, AsyncSnapshot snap) {
+                    if (snap.hasData) {
+                      return ProfilePicture(
+                        profilePicture: FirebaseStorageImage +
+                            snap.data["profile"] +
+                            "?alt=media",
+                        imagePath: null,
+                        radius: 6.0.h,
+                        withEditButton: false,
+                      );
+                    }
+                    return ProfilePicture(
+                      imagePath: null,
+                      radius: 6.0.h,
+                      withEditButton: false,
+                    );
+                  }),
               SizedBox(
                 width: 5.0.w,
               ),
               Text.rich(TextSpan(
-                  text: "Yanne",
+                  text: auth.getUser.displayName.toUpperCase().split(" ")[0],
                   style: TextStyle(
                       color: blackFont,
                       fontWeight: FontWeight.bold,
                       fontSize: 20.0.sp),
                   children: [
                     TextSpan(
-                        text: "\n" + "yannsid2@outlook.com",
+                        text: "\n" + auth.getUser.email,
                         style: TextStyle(
                             color: greyFont,
                             fontWeight: FontWeight.normal,

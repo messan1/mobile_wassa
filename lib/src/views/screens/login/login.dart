@@ -64,7 +64,7 @@ class _LoginState extends State<Login> {
     await audioPlayer.play();
     audioPlayer.playlistFinished.listen((finished) {
       if (finished) {
-        print("fini");
+     
         //Navigator.of(context).pop();
       }
     });
@@ -182,8 +182,4 @@ class _LoginState extends State<Login> {
         ));
   }
 
-  void onPressedCustomButton() {
-    logger.d("Logger is working!");
-    Get.toNamed('/Login');
-  }
 }

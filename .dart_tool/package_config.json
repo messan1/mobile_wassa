@@ -386,6 +386,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "g_skeleton",
+      "rootUri": "file:///Users/messanchristian/development/flutter/.pub-cache/hosted/pub.dartlang.org/g_skeleton-0.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "geolocator",
       "rootUri": "file:///Users/messanchristian/development/flutter/.pub-cache/hosted/pub.dartlang.org/geolocator-7.1.0",
       "packageUri": "lib/",
@@ -884,7 +890,7 @@
       "languageVersion": "2.2"
     }
   ],
-  "generated": "2021-07-19T13:18:19.885540Z",
+  "generated": "2021-07-20T14:56:24.008233Z",
   "generator": "pub",
   "generatorVersion": "2.13.3"
 }
