@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:ucolis/src/DataHandler/voiceData.dart';
 import 'package:ucolis/src/constants/constLangue.dart';
-import 'package:ucolis/src/constants/constString.dart';
 import 'package:ucolis/src/utils/sizeCalculator.dart';
 import 'package:ucolis/src/views/screens/dashboard/components/dashBoardSlide.dart';
 import 'package:sizer/sizer.dart';
@@ -22,6 +21,7 @@ class DashSlider extends StatelessWidget {
         child: Column(
           children: [
             CarouselSlider(
+
               options: CarouselOptions(
                 height: SC.height(),
                 autoPlay: false,

@@ -91,7 +91,7 @@ class _DashboardState extends State<Dashboard> {
             )),
             DashSlider(),
             Positioned(
-              bottom: 36.0.h,
+              bottom: 34.0.h,
               right: 0,
               child: Image.asset(
                 "assets/images/image1.png",
