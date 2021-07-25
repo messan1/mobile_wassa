@@ -370,7 +370,7 @@ List<Map<String, dynamic>> yesorno = [
 List<Map<String, dynamic>> roles = [
   {
     'title': 'Client',
-    'image': 'cars.svg',
+    'image': 'man.svg',
   },
   {
     'title': 'Coursier',
